@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة لوحات السيارات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-dark: #0d1b4b;
+      --blue-mid: #1a3a8f;
+      --blue-light: #2563eb;
+      --blue-soft: #3b82f6;
+      --blue-pale: #dbeafe;
+      --red-dark: #7f1d1d;
+      --red-mid: #b91c1c;
+      --red-light: #dc2626;
+      --red-soft: #ef4444;
+      --red-pale: #fee2e2;
+      --gold: #f59e0b;
+      --white: #ffffff;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.3);
+      --shadow-card: 0 8px 32px rgba(13,27,75,0.18);
+      --radius: 18px;
+      --radius-sm: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, var(--blue-dark) 0%, #1e1b4b 30%, #4c0519 70%, var(--red-dark) 100%);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -30%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      padding: 40px 20px 30px;
+      margin-bottom: 30px;
+    }
+
+    .header-icon {
+      font-size: 60px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 12px rgba(37,99,235,0.5));
+    }
+
+    .header h1 {
+      font-size: clamp(26px, 5vw, 42px);
+      font-weight: 900;
+      background: linear-gradient(90deg, #93c5fd, #ffffff, #fca5a5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: rgba(255,255,255,0.65);
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    .header-line {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue-soft), var(--red-soft));
+      border-radius: 4px;
+      margin: 16px auto 0;
+    }
+
+    /* ===== STATS BAR ===== */
+    .stats-bar {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat-item {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px 24px;
+      text-align: center;
+      flex: 1;
+      min-width: 130px;
+      max-width: 200px;
+    }
+
+    .stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: #93c5fd;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+    }
+
+    /* ===== FORM CARD ===== */
+    .form-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: var(--radius);
+      padding: 36px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .form-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .form-card-header .icon-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    }
+
+    .form-card-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .form-card-header p {
+      font-size: 12px;
+      color: var(--gray-600);
+      margin-top: 2px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-800);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group label .req {
+      color: var(--red-light);
+      font-size: 14px;
+    }
+
+    .form-group label .opt {
+      background: var(--gray-200);
+      color: var(--gray-600);
+      font-size: 10px;
+      padding: 1px 7px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 12px 14px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      color: var(--gray-800);
+      background: var(--gray-100);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--blue-soft);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+    }
+
+    .form-group input::placeholder { color: #94a3b8; }
+
+    /* ===== PLATE INPUT ===== */
+    .plate-section {
+      grid-column: 1 / -1;
+    }
+
+    .plate-preview-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .plate-inputs-box {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .plate-fields {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .plate-letter-group {
+      display: flex;
+      gap: 7px;
+    }
+
+    .plate-letter {
+      width: 58px;
+      height: 58px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      transition: all 0.25s;
+      outline: none;
+    }
+
+    .plate-letter:focus {
+      border-color: var(--blue-soft);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+    }
+
+    .plate-divider {
+      font-size: 26px;
+      color: var(--gray-600);
+      font-weight: 300;
+      padding: 0 2px;
+    }
+
+    .plate-number-input {
+      width: 120px;
+      height: 58px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      transition: all 0.25s;
+      outline: none;
+    }
+
+    .plate-number-input:focus {
+      border-color: var(--blue-soft);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+    }
+
+    .plate-hint {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ===== LIVE PLATE PREVIEW ===== */
+    .plate-preview {
+      background: #f8f4e8;
+      border: 3px solid #c9a227;
+      border-radius: 12px;
+      padding: 10px 16px;
+      min-width: 220px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.8);
+      position: relative;
+    }
+
+    .plate-preview::before {
+      content: '🇸🇦';
+      position: absolute;
+      top: -1px;
+      right: 8px;
+      font-size: 14px;
+    }
+
+    .plate-preview-top {
+      font-size: 10px;
+      color: #7a6b3a;
+      font-weight: 600;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+
+    .plate-preview-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 6px 0;
+    }
+
+    .plate-preview-letters {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: 6px;
+      direction: rtl;
+    }
+
+    .plate-preview-sep {
+      width: 2px;
+      height: 36px;
+      background: linear-gradient(to bottom, transparent, #c9a227, transparent);
+    }
+
+    .plate-preview-numbers {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: 4px;
+      direction: ltr;
+    }
+
+    .plate-preview-bottom {
+      font-size: 8px;
+      color: #7a6b3a;
+      font-weight: 500;
+      letter-spacing: 2px;
+      margin-top: 3px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
+      color: var(--white);
+      flex: 1;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, var(--blue-dark));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.5);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--red-light), var(--red-mid));
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(220,38,38,0.35);
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, var(--red-soft), var(--red-light));
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--gray-200);
+      color: var(--gray-800);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-200);
+      transform: translateY(-1px);
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-wrapper {
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    .search-wrapper input {
+      width: 100%;
+      padding: 14px 20px 14px 50px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      color: var(--white);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      outline: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: all 0.25s;
+    }
+
+    .search-wrapper input::placeholder { color: rgba(255,255,255,0.5); }
+    .search-wrapper input:focus {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.35);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ===== TABLE SECTION ===== */
+    .table-section {
+      background: rgba(255,255,255,0.97);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .table-header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, #1e1b4b 50%, #4c0519 100%);
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-header h3 {
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-count {
+      background: var(--red-light);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    thead tr {
+      background: linear-gradient(90deg, var(--blue-pale), #f0f9ff);
+    }
+
+    thead th {
+      padding: 14px 18px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background 0.18s;
+    }
+
+    tbody tr:hover { background: #f8faff; }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody td {
+      padding: 15px 18px;
+      font-size: 13px;
+      color: var(--gray-800);
+      vertical-align: middle;
+    }
+
+    /* ===== PLATE CELL ===== */
+    .plate-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: #f8f4e8;
+      border: 2px solid #c9a227;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-weight: 800;
+      font-size: 14px;
+      color: #1a1a1a;
+      white-space: nowrap;
+      letter-spacing: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .plate-cell-sep {
+      width: 1.5px;
+      height: 22px;
+      background: linear-gradient(to bottom, transparent, #c9a227, transparent);
+      margin: 0 10px;
+    }
+
+    /* ===== COLOR DOT ===== */
+    .color-dot-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.15);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .btn-edit {
+      background: var(--blue-pale);
+      color: var(--blue-mid);
+    }
+
+    .btn-edit:hover {
+      background: var(--blue-soft);
+      color: var(--white);
+      transform: scale(1.1);
+    }
+
+    .btn-del {
+      background: var(--red-pale);
+      color: var(--red-mid);
+    }
+
+    .btn-del:hover {
+      background: var(--red-soft);
+      color: var(--white);
+      transform: scale(1.1);
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-state .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state p {
+      color: var(--gray-600);
+      font-size: 15px;
+    }
+
+    .empty-state span {
+      font-size: 12px;
+      color: #94a3b8;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-head {
+      background: linear-gradient(135deg, var(--blue-dark), #1e1b4b 50%, var(--red-dark));
+      padding: 22px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-head h3 {
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: var(--white);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+
+    .modal-body {
+      padding: 28px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    /* ===== TOAST ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease;
+      min-width: 220px;
+      max-width: 320px;
+    }
+
+    .toast.success { border-right: 4px solid #22c55e; }
+    .toast.error   { border-right: 4px solid var(--red-soft); }
+    .toast.info    { border-right: 4px solid var(--blue-soft); }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ===== COLOR SELECT ===== */
+    .color-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .color-opt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 7px 14px;
+      border-radius: 30px;
+      border: 2px solid var(--gray-200);
+      transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .color-opt:hover { border-color: var(--blue-soft); background: var(--blue-pale); }
+
+    .color-opt input { display: none; }
+
+    .color-opt input:checked ~ span.label {
+      color: var(--blue-mid);
+    }
+
+    .color-opt:has(input:checked) {
+      border-color: var(--blue-soft);
+      background: var(--blue-pale);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    .color-opt .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.15);
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+
+      .form-card { padding: 22px 16px; }
+
+      .form-grid { grid-template-columns: 1fr; }
+
+      .form-group.full-width { grid-column: unset; }
+
+      .plate-fields { justify-content: center; }
+
+      .plate-letter { width: 50px; height: 50px; font-size: 18px; }
+
+      .plate-number-input { width: 100px; height: 50px; font-size: 18px; }
+
+      .plate-preview-wrapper { flex-direction: column; align-items: center; }
+
+      .plate-preview { min-width: unset; width: 100%; }
+
+      .btn-group { flex-direction: column; }
+
+      .btn-primary { min-width: unset; }
+
+      .action-btns { gap: 5px; }
+
+      table { min-width: 500px; }
+
+      .stat-item { min-width: 100px; }
+    }
+
+    /* ===== LETTER SELECT DROPDOWN ===== */
+    .plate-letter-select {
+      width: 58px;
+      height: 58px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      text-align-last: center;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      transition: all 0.25s;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 0 4px;
+    }
+
+    .plate-letter-select:focus {
+      border-color: var(--blue-soft);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+    }
+
+    @media (max-width: 640px) {
+      .plate-letter-select { width: 50px; height: 50px; font-size: 18px; }
+    }
+
+    /* ===== CONFIRM DELETE ===== */
+    .confirm-modal {
+      max-width: 400px;
+    }
+
+    .confirm-body {
+      padding: 30px 28px;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      font-size: 52px;
+      margin-bottom: 14px;
+    }
+
+    .confirm-body h4 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+    }
+
+    .confirm-body p {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
+
+    .confirm-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* name badge */
+    .name-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .row-num {
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* scroll style */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
+
+    /* Print / export */
+    .print-btn {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 8px 18px;
+      border-radius: 9px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">🚗</div>
+    <h1>إدارة لوحات السيارات</h1>
+    <p>النظام السعودي لتسجيل وإدارة بيانات المركبات</p>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="totalCount">0</div>
+      <div class="stat-label">إجمالي السيارات</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="todayCount">0</div>
+      <div class="stat-label">مضافة اليوم</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="colorCount">0</div>
+      <div class="stat-label">ألوان مختلفة</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="typeCount">0</div>
+      <div class="stat-label">أنواع مختلفة</div>
+    </div>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="icon-badge">➕</div>
+      <div>
+        <h2 id="formTitle">إضافة سيارة جديدة</h2>
+        <p id="formSubtitle">أدخل بيانات السيارة أدناه</p>
+      </div>
+    </div>
+
+    <div class="form-grid">
+
+      <!-- NAME -->
+      <div class="form-group">
+        <label>👤 الاسم <span class="req">*</span></label>
+        <input type="text" id="ownerName" placeholder="اسم صاحب السيارة" />
+      </div>
+
+      <!-- COLOR -->
+      <div class="form-group">
+        <label>🎨 لون السيارة <span class="req">*</span></label>
+        <select id="carColor">
+          <option value="">-- اختر اللون --</option>
+          <option value="أبيض"    data-color="#ffffff">أبيض</option>
+          <option value="أسود"    data-color="#1a1a1a">أسود</option>
+          <option value="رمادي"   data-color="#808080">رمادي</option>
+          <option value="فضي"     data-color="#c0c0c0">فضي</option>
+          <option value="أحمر"    data-color="#dc2626">أحمر</option>
+          <option value="أزرق"    data-color="#2563eb">أزرق</option>
+          <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
+          <option value="أخضر"    data-color="#16a34a">أخضر</option>
+          <option value="بيج"     data-color="#d4b483">بيج</option>
+          <option value="بني"     data-color="#92400e">بني</option>
+          <option value="ذهبي"    data-color="#f59e0b">ذهبي</option>
+          <option value="برتقالي" data-color="#f97316">برتقالي</option>
+          <option value="زيتي"    data-color="#4d7c0f">زيتي</option>
+          <option value="كحلي"    data-color="#1e3a5f">كحلي</option>
+          <option value="بنفسجي"  data-color="#7c3aed">بنفسجي</option>
+          <option value="وردي"    data-color="#ec4899">وردي</option>
+        </select>
+      </div>
+
+      <!-- CAR TYPE -->
+      <div class="form-group">
+        <label>🏷️ نوع السيارة <span class="opt">اختياري</span></label>
+        <select id="carType">
+          <option value="">-- اختر النوع --</option>
+          <option>تويوتا</option>
+          <option>لكزس</option>
+          <option>نيسان</option>
+          <option>هوندا</option>
+          <option>مرسيدس</option>
+          <option>بي إم دبليو</option>
+          <option>أودي</option>
+          <option>هيونداي</option>
+          <option>كيا</option>
+          <option>فورد</option>
+          <option>شيفروليه</option>
+          <option>جيب</option>
+          <option>لاند روفر</option>
+          <option>بورش</option>
+          <option>فيراري</option>
+          <option>لمبرغيني</option>
+          <option>رولز رويس</option>
+          <option>رنج روفر</option>
+          <option>جي إم سي</option>
+          <option>سوزوكي</option>
+          <option>ميتسوبيشي</option>
+          <option>مازدا</option>
+          <option>فولكس واجن</option>
+          <option>بيجو</option>
+          <option>رينو</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+
+      <!-- MODEL -->
+      <div class="form-group">
+        <label>📅 موديل السيارة <span class="opt">اختياري</span></label>
+        <input type="number" id="carModel" placeholder="مثال: 2024" min="1980" max="2030" />
+      </div>
+
+      <!-- PLATE -->
+      <div class="form-group plate-section">
+        <label>🔢 رقم اللوحة <span class="req">*</span></label>
+        <div class="plate-preview-wrapper">
+          <div class="plate-inputs-box">
+            <div class="plate-fields">
+              <div class="plate-letter-group">
+                <select class="plate-letter-select" id="letter1" onchange="updatePlatePreview()">
+                  <option value="">-</option>
+                  <option>أ</option><option>ب</option><option>ح</option>
+                  <option>د</option><option>ر</option><option>س</option>
+                  <option>ص</option><option>ط</option><option>ع</option>
+                  <option>ق</option><option>ك</option><option>ل</option>
+                  <option>م</option><option>ن</option><option>ه</option>
+                  <option>و</option><option>ي</option>
+                </select>
+                <select class="plate-letter-select" id="letter2" onchange="updatePlatePreview()">
+                  <option value="">-</option>
+                  <option>أ</option><option>ب</option><option>ح</option>
+                  <option>د</option><option>ر</option><option>س</option>
+                  <option>ص</option><option>ط</option><option>ع</option>
+                  <option>ق</option><option>ك</option><option>ل</option>
+                  <option>م</option><option>ن</option><option>ه</option>
+                  <option>و</option><option>ي</option>
+                </select>
+                <select class="plate-letter-select" id="letter3" onchange="updatePlatePreview()">
+                  <option value="">-</option>
+                  <option>أ</option><option>ب</option><option>ح</option>
+                  <option>د</option><option>ر</option><option>س</option>
+                  <option>ص</option><option>ط</option><option>ع</option>
+                  <option>ق</option><option>ك</option><option>ل</option>
+                  <option>م</option><option>ن</option><option>ه</option>
+                  <option>و</option><option>ي</option>
+                </select>
+              </div>
+              <span class="plate-divider">|</span>
+              <input
+                type="text"
+                id="plateNumber"
+                class="plate-number-input"
+                placeholder="1234"
+                maxlength="4"
+                oninput="this.value=this.value.replace(/[^0-9]/g,''); updatePlatePreview()"
+              />
+            </div>
+            <div class="plate-hint">
+              ℹ️ اختر ٣ حروف عربية · أدخل من ١ إلى ٤ أرقام
+            </div>
+          </div>
+
+          <!-- LIVE PREVIEW -->
+          <div class="plate-preview">
+            <div class="plate-preview-top">KINGDOM OF SAUDI ARABIA</div>
+            <div class="plate-preview-main">
+              <div class="plate-preview-letters" id="prevLetters">- - -</div>
+              <div class="plate-preview-sep"></div>
+              <div class="plate-preview-numbers" id="prevNumbers">----</div>
+            </div>
+            <div class="plate-preview-bottom">المملكة العربية السعودية</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="submitForm()">
+        <span id="submitIcon">💾</span>
+        <span id="submitText">حفظ السيارة</span>
+      </button>
+      <button class="btn btn-secondary" onclick="resetForm()">
+        🔄 إعادة تعيين
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE SECTION -->
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث بالاسم أو رقم اللوحة أو نوع السيارة..." oninput="renderTable()" />
+  </div>
+
+  <div class="table-section">
+    <div class="table-header">
+      <h3>
+        📋 سجل السيارات
+        <span class="badge-count" id="tableCount">0</span>
+      </h3>
+      <button class="print-btn" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+
+    <div class="table-responsive">
+      <table id="carsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>لوحة السيارة</th>
+            <th>نوع السيارة</th>
+            <th>الموديل</th>
+            <th>اللون</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Rows injected by JS -->
+        </tbody>
+      </table>
+      <div id="emptyState" class="empty-state" style="display:none">
+        <div class="empty-icon">🚘</div>
+        <p>لا توجد سيارات مسجلة حتى الآن</p>
+        <span>ابدأ بإضافة سيارة جديدة من النموذج أعلاه</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✏️ تعديل بيانات السيارة</h3>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:16px;">
+
+        <div class="form-group">
+          <label>👤 الاسم <span class="req">*</span></label>
+          <input type="text" id="editName" placeholder="اسم صاحب السيارة" />
+        </div>
+
+        <div class="form-group">
+          <label>🎨 لون السيارة <span class="req">*</span></label>
+          <select id="editColor">
+            <option value="">-- اختر اللون --</option>
+            <option value="أبيض"    data-color="#ffffff">أبيض</option>
+            <option value="أسود"    data-color="#1a1a1a">أسود</option>
+            <option value="رمادي"   data-color="#808080">رمادي</option>
+            <option value="فضي"     data-color="#c0c0c0">فضي</option>
+            <option value="أحمر"    data-color="#dc2626">أحمر</option>
+            <option value="أزرق"    data-color="#2563eb">أزرق</option>
+            <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
+            <option value="أخضر"    data-color="#16a34a">أخضر</option>
+            <option value="بيج"     data-color="#d4b483">بيج</option>
+            <option value="بني"     data-color="#92400e">بني</option>
+            <option value="ذهبي"    data-color="#f59e0b">ذهبي</option>
+            <option value="برتقالي" data-color="#f97316">برتقالي</option>
+            <option value="زيتي"    data-color="#4d7c0f">زيتي</option>
+            <option value="كحلي"    data-color="#1e3a5f">كحلي</option>
+            <option value="بنفسجي"  data-color="#7c3aed">بنفسجي</option>
+            <option value="وردي"    data-color="#ec4899">وردي</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🏷️ نوع السيارة <span class="opt">اختياري</span></label>
+          <select id="editType">
+            <option value="">-- اختر النوع --</option>
+            <option>تويوتا</option><option>لكزس</option><option>نيسان</option>
+            <option>هوندا</option><option>مرسيدس</option><option>بي إم دبليو</option>
+            <option>أودي</option><option>هيونداي</option><option>كيا</option>
+            <option>فورد</option><option>شيفروليه</option><option>جيب</option>
+            <option>لاند روفر</option><option>بورش</option><option>فيراري</option>
+            <option>لمبرغيني</option><option>رولز رويس</option><option>رنج روفر</option>
+            <option>جي إم سي</option><option>سوزوكي</option><option>ميتسوبيشي</option>
+            <option>مازدا</option><option>فولكس واجن</option><option>بيجو</option>
+            <option>رينو</option><option>أخرى</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>📅 الموديل <span class="opt">اختياري</span></label>
+          <input type="number" id="editModel" placeholder="مثال: 2024" min="1980" max="2030" />
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>🔢 رقم اللوحة <span class="req">*</span></label>
+          <div class="plate-fields">
+            <div class="plate-letter-group">
+              <select class="plate-letter-select" id="editL1" onchange="updateEditPreview()">
+                <option value="">-</option>
+                <option>أ</option><option>ب</option><option>ح</option>
+                <option>د</option><option>ر</option><option>س</option>
+                <option>ص</option><option>ط</option><option>ع</option>
+                <option>ق</option><option>ك</option><option>ل</option>
+                <option>م</option><option>ن</option><option>ه</option>
+                <option>و</option><option>ي</option>
+              </select>
+              <select class="plate-letter-select" id="editL2" onchange="updateEditPreview()">
+                <option value="">-</option>
+                <option>أ</option><option>ب</option><option>ح</option>
+                <option>د</option><option>ر</option><option>س</option>
+                <option>ص</option><option>ط</option><option>ع</option>
+                <option>ق</option><option>ك</option><option>ل</option>
+                <option>م</option><option>ن</option><option>ه</option>
+                <option>و</option><option>ي</option>
+              </select>
+              <select class="plate-letter-select" id="editL3" onchange="updateEditPreview()">
+                <option value="">-</option>
+                <option>أ</option><option>ب</option><option>ح</option>
+                <option>د</option><option>ر</option><option>س</option>
+                <option>ص</option><option>ط</option><option>ع</option>
+                <option>ق</option><option>ك</option><option>ل</option>
+                <option>م</option><option>ن</option><option>ه</option>
+                <option>و</option><option>ي</option>
+              </select>
+            </div>
+            <span class="plate-divider">|</span>
+            <input
+              type="text"
+              id="editNum"
+              class="plate-number-input"
+              placeholder="1234"
+              maxlength="4"
+              oninput="this.value=this.value.replace(/[^0-9]/g,''); updateEditPreview()"
+            />
+          </div>
+          <div style="margin-top:12px">
+            <div class="plate-preview" style="max-width:260px; margin:0 auto;">
+              <div class="plate-preview-top">KINGDOM OF SAUDI ARABIA</div>
+              <div class="plate-preview-main">
+                <div class="plate-preview-letters" id="editPrevLetters">- - -</div>
+                <div class="plate-preview-sep"></div>
+                <div class="plate-preview-numbers" id="editPrevNumbers">----</div>
+              </div>
+              <div class="plate-preview-bottom">المملكة العربية السعودية</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="btn-group" style="margin-top:24px;">
+        <button class="btn btn-primary" onclick="saveEdit()">💾 حفظ التعديلات</button>
+        <button class="btn btn-secondary" onclick="closeEditModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal confirm-modal">
+    <div class="modal-head">
+      <h3>🗑️ تأكيد الحذف</h3>
+      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-icon">⚠️</div>
+      <h4>هل أنت متأكد من الحذف؟</h4>
+      <p>سيتم حذف بيانات السيارة نهائياً ولا يمكن استرجاعها.</p>
+      <div class="confirm-btns">
+        <button class="btn btn-danger" onclick="confirmDelete()">🗑️ نعم، احذف</button>
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  // ==============================
+  // DATA STORE
+  // ==============================
+  let cars = JSON.parse(localStorage.getItem('saudiCarPlates') || '[]');
+  let editIndex = -1;
+  let deleteIndex = -1;
+  let editMode = false;
+
+  // COLOR MAP
+  const colorMap = {
+    'أبيض': '#f1f5f9', 'أسود': '#1a1a1a', 'رمادي': '#808080',
+    'فضي': '#c0c0c0', 'أحمر': '#dc2626', 'أزرق': '#2563eb',
+    'أزرق سماوي': '#0ea5e9', 'أخضر': '#16a34a', 'بيج': '#d4b483',
+    'بني': '#92400e', 'ذهبي': '#f59e0b', 'برتقالي': '#f97316',
+    'زيتي': '#4d7c0f', 'كحلي': '#1e3a5f', 'بنفسجي': '#7c3aed', 'وردي': '#ec4899'
+  };
+
+  // ==============================
+  // PLATE PREVIEW
+  // ==============================
+  function updatePlatePreview() {
+    const l1 = document.getElementById('letter1').value;
+    const l2 = document.getElementById('letter2').value;
+    const l3 = document.getElementById('letter3').value;
+    const num = document.getElementById('plateNumber').value;
+
+    const letters = [l1 || '-', l2 || '-', l3 || '-'].join(' ');
+    const numbers = num || '----';
+
+    document.getElementById('prevLetters').textContent = letters;
+    document.getElementById('prevNumbers').textContent = numbers;
+  }
+
+  function updateEditPreview() {
+    const l1 = document.getElementById('editL1').value;
+    const l2 = document.getElementById('editL2').value;
+    const l3 = document.getElementById('editL3').value;
+    const num = document.getElementById('editNum').value;
+
+    const letters = [l1 || '-', l2 || '-', l3 || '-'].join(' ');
+    const numbers = num || '----';
+
+    document.getElementById('editPrevLetters').textContent = letters;
+    document.getElementById('editPrevNumbers').textContent = numbers;
+  }
+
+  // ==============================
+  // FORM SUBMIT
+  // ==============================
+  function submitForm() {
+    const name  = document.getElementById('ownerName').value.trim();
+    const l1    = document.getElementById('letter1').value;
+    const l2    = document.getElementById('letter2').value;
+    const l3    = document.getElementById('letter3').value;
+    const num   = document.getElementById('plateNumber').value.trim();
+    const type  = document.getElementById('carType').value;
+    const model = document.getElementById('carModel').value.trim();
+    const color = document.getElementById('carColor').value;
+
+    if (!name)  { showToast('⚠️ يرجى إدخال اسم صاحب السيارة', 'error'); return; }
+    if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة للوحة', 'error'); return; }
+    if (!num || num.length < 1 || num.length > 4) { showToast('⚠️ يرجى إدخال رقم اللوحة (١-٤ أرقام)', 'error'); return; }
+    if (!color) { showToast('⚠️ يرجى اختيار لون السيارة', 'error'); return; }
+
+    const record = {
+      name, letters: [l1, l2, l3], number: num,
+      type, model, color,
+      date: new Date().toLocaleDateString('ar-SA'),
+      timestamp: Date.now()
+    };
+
+    if (editMode) {
+      cars[editIndex] = record;
+      showToast('✅ تم تعديل البيانات بنجاح', 'success');
+      editMode = false;
+      editIndex = -1;
+      document.getElementById('formTitle').textContent = 'إضافة سيارة جديدة';
+      document.getElementById('formSubtitle').textContent = 'أدخل بيانات السيارة أدناه';
+      document.getElementById('submitIcon').textContent = '💾';
+      document.getElementById('submitText').textContent = 'حفظ السيارة';
+      document.querySelector('.form-card-header .icon-badge').textContent = '➕';
+    } else {
+      cars.push(record);
+      showToast('✅ تمت إضافة السيارة بنجاح', 'success');
+    }
+
+    saveCars();
+    resetForm();
+    renderTable();
+    updateStats();
+  }
+
+  function resetForm() {
+    document.getElementById('ownerName').value = '';
+    document.getElementById('letter1').value = '';
+    document.getElementById('letter2').value = '';
+    document.getElementById('letter3').value = '';
+    document.getElementById('plateNumber').value = '';
+    document.getElementById('carType').value = '';
+    document.getElementById('carModel').value = '';
+    document.getElementById('carColor').value = '';
+    updatePlatePreview();
+
+    if (editMode) {
+      editMode = false;
+      editIndex = -1;
+      document.getElementById('formTitle').textContent = 'إضافة سيارة جديدة';
+      document.getElementById('formSubtitle').textContent = 'أدخل بيانات السيارة أدناه';
+      document.getElementById('submitIcon').textContent = '💾';
+      document.getElementById('submitText').textContent = 'حفظ السيارة';
+      document.querySelector('.form-card-header .icon-badge').textContent = '➕';
+    }
+  }
+
+  // ==============================
+  // RENDER TABLE
+  // ==============================
+  function renderTable() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    const filtered = cars.filter(c => {
+      const plate = c.letters.join('') + c.number;
+      return (
+        c.name.toLowerCase().includes(query) ||
+        plate.includes(query) ||
+        (c.type || '').toLowerCase().includes(query) ||
+        (c.color || '').toLowerCase().includes(query)
+      );
+    });
+
+    document.getElementById('tableCount').textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      tbody.innerHTML = filtered.map((c, i) => {
+        const realIdx = cars.indexOf(c);
+        const clr = colorMap[c.color] || '#888';
+        const isDark = isColorDark(clr);
+        const initial = c.name.charAt(0);
+        return `
+          <tr>
+            <td class="row-num">${i + 1}</td>
+            <td>
+              <div class="name-badge">
+                <div class="avatar">${initial}</div>
+                <span>${c.name}</span>
+              </div>
+            </td>
+            <td>
+              <span class="plate-cell">
+                <span dir="rtl">${c.letters.join(' ')}</span>
+                <span class="plate-cell-sep"></span>
+                <span dir="ltr">${c.number}</span>
+              </span>
+            </td>
+            <td>${c.type || '<span style="color:#94a3b8">—</span>'}</td>
+            <td>${c.model || '<span style="color:#94a3b8">—</span>'}</td>
+            <td>
+              <div class="color-dot-wrapper">
+                <span class="color-dot" style="background:${clr}"></span>
+                <span>${c.color}</span>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-icon btn-edit" onclick="openEdit(${realIdx})" title="تعديل">✏️</button>
+                <button class="btn-icon btn-del"  onclick="openDelete(${realIdx})" title="حذف">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  function isColorDark(hex) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+  }
+
+  // ==============================
+  // EDIT
+  // ==============================
+  function openEdit(idx) {
+    editIndex = idx;
+    const c = cars[idx];
+
+    document.getElementById('editName').value  = c.name;
+    document.getElementById('editL1').value    = c.letters[0] || '';
+    document.getElementById('editL2').value    = c.letters[1] || '';
+    document.getElementById('editL3').value    = c.letters[2] || '';
+    document.getElementById('editNum').value   = c.number;
+    document.getElementById('editType').value  = c.type || '';
+    document.getElementById('editModel').value = c.model || '';
+    document.getElementById('editColor').value = c.color;
+
+    updateEditPreview();
+    document.getElementById('editModal').classList.add('active');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+  }
+
+  function saveEdit() {
+    const name  = document.getElementById('editName').value.trim();
+    const l1    = document.getElementById('editL1').value;
+    const l2    = document.getElementById('editL2').value;
+    const l3    = document.getElementById('editL3').value;
+    const num   = document.getElementById('editNum').value.trim();
+    const type  = document.getElementById('editType').value;
+    const model = document.getElementById('editModel').value.trim();
+    const color = document.getElementById('editColor').value;
+
+    if (!name)  { showToast('⚠️ يرجى إدخال الاسم', 'error'); return; }
+    if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة', 'error'); return; }
+    if (!num)   { showToast('⚠️ يرجى إدخال رقم اللوحة', 'error'); return; }
+    if (!color) { showToast('⚠️ يرجى اختيار اللون', 'error'); return; }
+
+    cars[editIndex] = {
+      ...cars[editIndex],
+      name, letters: [l1, l2, l3], number: num,
+      type, model, color
+    };
+
+    saveCars();
+    renderTable();
+    updateStats();
+    closeEditModal();
+    showToast('✅ تم تعديل البيانات بنجاح', 'success');
+  }
+
+  // ==============================
+  // DELETE
+  // ==============================
+  function openDelete(idx) {
+    deleteIndex = idx;
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+  }
+
+  function confirmDelete() {
+    cars.splice(deleteIndex, 1);
+    saveCars();
+    renderTable();
+    updateStats();
+    closeDeleteModal();
+    showToast('🗑️ تم حذف السيارة بنجاح', 'info');
+  }
+
+  // ==============================
+  // STATS
+  // ==============================
+  function updateStats() {
+    document.getElementById('totalCount').textContent = cars.length;
+
+    const today = new Date().toLocaleDateString('ar-SA');
+    const todayCount = cars.filter(c => c.date === today).length;
+    document.getElementById('todayCount').textContent = todayCount;
+
+    const uniqueColors = new Set(cars.map(c => c.color).filter(Boolean));
+    document.getElementById('colorCount').textContent = uniqueColors.size;
+
+    const uniqueTypes = new Set(cars.map(c => c.type).filter(Boolean));
+    document.getElementById('typeCount').textContent = uniqueTypes.size;
+  }
+
+  // ==============================
+  // SAVE
+  // ==============================
+  function saveCars() {
+    localStorage.setItem('saudiCarPlates', JSON.stringify(cars));
+  }
+
+  // ==============================
+  // TOAST
+  // ==============================
+  function showToast(msg, type = 'info') {
+    const tc = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = msg;
+    tc.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transition = 'opacity 0.4s';
+      setTimeout(() => tc.removeChild(t), 400);
+    }, 3000);
+  }
+
+  // Close modals on outside click
+  document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEditModal();
+  });
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+
+  // ==============================
+  // INIT
+  // ==============================
+  renderTable();
+  updateStats();
+</script>
+</body>
+</html>

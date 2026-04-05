@@ -1017,8 +1017,15 @@
     </div>
   </div>
 
+  <!-- ADD TOGGLE BUTTON -->
+  <div style="display:flex; justify-content:center; margin-bottom:20px;">
+    <button class="btn btn-primary" type="button" onclick="toggleAddForm()" id="toggleFormBtn" style="max-width:280px;">
+      ➕ إضافة سيارة جديدة
+    </button>
+  </div>
+
   <!-- ADD FORM -->
-  <div class="form-card">
+  <div class="form-card" id="addFormCard" style="display:none;">
     <div class="form-card-header">
       <div class="icon-badge">➕</div>
       <div>
@@ -1040,22 +1047,22 @@
         <label>🎨 لون السيارة <span class="opt">اختياري</span></label>
         <select id="carColor">
           <option value="">-- اختر اللون --</option>
-          <option value="أبيض"    data-color="#ffffff">أبيض</option>
-          <option value="أسود"    data-color="#1a1a1a">أسود</option>
-          <option value="رمادي"   data-color="#808080">رمادي</option>
-          <option value="فضي"     data-color="#c0c0c0">فضي</option>
-          <option value="أحمر"    data-color="#dc2626">أحمر</option>
-          <option value="أزرق"    data-color="#2563eb">أزرق</option>
+          <option value="أبيض" data-color="#ffffff">أبيض</option>
+          <option value="أسود" data-color="#1a1a1a">أسود</option>
+          <option value="رمادي" data-color="#808080">رمادي</option>
+          <option value="فضي" data-color="#c0c0c0">فضي</option>
+          <option value="أحمر" data-color="#dc2626">أحمر</option>
+          <option value="أزرق" data-color="#2563eb">أزرق</option>
           <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
-          <option value="أخضر"    data-color="#16a34a">أخضر</option>
-          <option value="بيج"     data-color="#d4b483">بيج</option>
-          <option value="بني"     data-color="#92400e">بني</option>
-          <option value="ذهبي"    data-color="#f59e0b">ذهبي</option>
+          <option value="أخضر" data-color="#16a34a">أخضر</option>
+          <option value="بيج" data-color="#d4b483">بيج</option>
+          <option value="بني" data-color="#92400e">بني</option>
+          <option value="ذهبي" data-color="#f59e0b">ذهبي</option>
           <option value="برتقالي" data-color="#f97316">برتقالي</option>
-          <option value="زيتي"    data-color="#4d7c0f">زيتي</option>
-          <option value="كحلي"    data-color="#1e3a5f">كحلي</option>
-          <option value="بنفسجي"  data-color="#7c3aed">بنفسجي</option>
-          <option value="وردي"    data-color="#ec4899">وردي</option>
+          <option value="زيتي" data-color="#4d7c0f">زيتي</option>
+          <option value="كحلي" data-color="#1e3a5f">كحلي</option>
+          <option value="بنفسجي" data-color="#7c3aed">بنفسجي</option>
+          <option value="وردي" data-color="#ec4899">وردي</option>
         </select>
       </div>
 
@@ -1234,25 +1241,25 @@
         </div>
 
         <div class="form-group">
-          <label>🎨 لون السيارة <span class="req">*</span></label>
+          <label>🎨 لون السيارة <span class="opt">اختياري</span></label>
           <select id="editColor">
             <option value="">-- اختر اللون --</option>
-            <option value="أبيض"    data-color="#ffffff">أبيض</option>
-            <option value="أسود"    data-color="#1a1a1a">أسود</option>
-            <option value="رمادي"   data-color="#808080">رمادي</option>
-            <option value="فضي"     data-color="#c0c0c0">فضي</option>
-            <option value="أحمر"    data-color="#dc2626">أحمر</option>
-            <option value="أزرق"    data-color="#2563eb">أزرق</option>
+            <option value="أبيض" data-color="#ffffff">أبيض</option>
+            <option value="أسود" data-color="#1a1a1a">أسود</option>
+            <option value="رمادي" data-color="#808080">رمادي</option>
+            <option value="فضي" data-color="#c0c0c0">فضي</option>
+            <option value="أحمر" data-color="#dc2626">أحمر</option>
+            <option value="أزرق" data-color="#2563eb">أزرق</option>
             <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
-            <option value="أخضر"    data-color="#16a34a">أخضر</option>
-            <option value="بيج"     data-color="#d4b483">بيج</option>
-            <option value="بني"     data-color="#92400e">بني</option>
-            <option value="ذهبي"    data-color="#f59e0b">ذهبي</option>
+            <option value="أخضر" data-color="#16a34a">أخضر</option>
+            <option value="بيج" data-color="#d4b483">بيج</option>
+            <option value="بني" data-color="#92400e">بني</option>
+            <option value="ذهبي" data-color="#f59e0b">ذهبي</option>
             <option value="برتقالي" data-color="#f97316">برتقالي</option>
-            <option value="زيتي"    data-color="#4d7c0f">زيتي</option>
-            <option value="كحلي"    data-color="#1e3a5f">كحلي</option>
-            <option value="بنفسجي"  data-color="#7c3aed">بنفسجي</option>
-            <option value="وردي"    data-color="#ec4899">وردي</option>
+            <option value="زيتي" data-color="#4d7c0f">زيتي</option>
+            <option value="كحلي" data-color="#1e3a5f">كحلي</option>
+            <option value="بنفسجي" data-color="#7c3aed">بنفسجي</option>
+            <option value="وردي" data-color="#ec4899">وردي</option>
           </select>
         </div>
 
@@ -1383,6 +1390,32 @@
   };
 
   // ==============================
+  // TOGGLE ADD FORM
+  // ==============================
+  function toggleAddForm(forceOpen = null) {
+    const formCard = document.getElementById('addFormCard');
+    const btn = document.getElementById('toggleFormBtn');
+
+    const isHidden = formCard.style.display === 'none';
+
+    let shouldOpen;
+    if (forceOpen === null) {
+      shouldOpen = isHidden;
+    } else {
+      shouldOpen = forceOpen;
+    }
+
+    if (shouldOpen) {
+      formCard.style.display = 'block';
+      btn.innerHTML = '➖ إغلاق نموذج الإضافة';
+      formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      formCard.style.display = 'none';
+      btn.innerHTML = '➕ إضافة سيارة جديدة';
+    }
+  }
+
+  // ==============================
   // PLATE PREVIEW
   // ==============================
   function updatePlatePreview() {
@@ -1427,7 +1460,6 @@
     if (!name)  { showToast('⚠️ يرجى إدخال اسم صاحب السيارة', 'error'); return; }
     if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة للوحة', 'error'); return; }
     if (!num || num.length < 1 || num.length > 4) { showToast('⚠️ يرجى إدخال رقم اللوحة (١-٤ أرقام)', 'error'); return; }
-    if (!color) { showToast('⚠️ يرجى اختيار لون السيارة', 'error'); return; }
 
     const record = {
       name, letters: [l1, l2, l3], number: num,
@@ -1455,6 +1487,7 @@
     resetForm();
     renderTable();
     updateStats();
+    toggleAddForm(false);
   }
 
   function resetForm() {
@@ -1507,8 +1540,17 @@
       tbody.innerHTML = filtered.map((c, i) => {
         const realIdx = cars.indexOf(c);
         const clr = colorMap[c.color] || '#888';
-        const isDark = isColorDark(clr);
         const initial = c.name.charAt(0);
+
+        const colorHtml = c.color
+          ? `
+            <div class="color-dot-wrapper">
+              <span class="color-dot" style="background:${clr}"></span>
+              <span>${c.color}</span>
+            </div>
+          `
+          : '<span style="color:#94a3b8">—</span>';
+
         return `
           <tr>
             <td class="row-num">${i + 1}</td>
@@ -1527,16 +1569,11 @@
             </td>
             <td>${c.type || '<span style="color:#94a3b8">—</span>'}</td>
             <td>${c.model || '<span style="color:#94a3b8">—</span>'}</td>
-            <td>
-              <div class="color-dot-wrapper">
-                <span class="color-dot" style="background:${clr}"></span>
-                <span>${c.color}</span>
-              </div>
-            </td>
+            <td>${colorHtml}</td>
             <td>
               <div class="action-btns">
                 <button class="btn-icon btn-edit" onclick="openEdit(${realIdx})" title="تعديل">✏️</button>
-                <button class="btn-icon btn-del"  onclick="openDelete(${realIdx})" title="حذف">🗑️</button>
+                <button class="btn-icon btn-del" onclick="openDelete(${realIdx})" title="حذف">🗑️</button>
               </div>
             </td>
           </tr>
@@ -1566,7 +1603,7 @@
     document.getElementById('editNum').value   = c.number;
     document.getElementById('editType').value  = c.type || '';
     document.getElementById('editModel').value = c.model || '';
-    document.getElementById('editColor').value = c.color;
+    document.getElementById('editColor').value = c.color || '';
 
     updateEditPreview();
     document.getElementById('editModal').classList.add('active');
@@ -1589,7 +1626,6 @@
     if (!name)  { showToast('⚠️ يرجى إدخال الاسم', 'error'); return; }
     if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة', 'error'); return; }
     if (!num)   { showToast('⚠️ يرجى إدخال رقم اللوحة', 'error'); return; }
-    if (!color) { showToast('⚠️ يرجى اختيار اللون', 'error'); return; }
 
     cars[editIndex] = {
       ...cars[editIndex],
@@ -1678,6 +1714,7 @@
   // ==============================
   renderTable();
   updateStats();
+  updatePlatePreview();
 </script>
 </body>
 </html>

@@ -2,1719 +2,836 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>إدارة لوحات السيارات</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --blue-dark: #0d1b4b;
-      --blue-mid: #1a3a8f;
-      --blue-light: #2563eb;
-      --blue-soft: #3b82f6;
-      --blue-pale: #dbeafe;
-      --red-dark: #7f1d1d;
-      --red-mid: #b91c1c;
-      --red-light: #dc2626;
-      --red-soft: #ef4444;
-      --red-pale: #fee2e2;
-      --gold: #f59e0b;
-      --white: #ffffff;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-600: #475569;
-      --gray-800: #1e293b;
-      --shadow-lg: 0 20px 60px rgba(0,0,0,0.3);
-      --shadow-card: 0 8px 32px rgba(13,27,75,0.18);
-      --radius: 18px;
-      --radius-sm: 10px;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: linear-gradient(135deg, var(--blue-dark) 0%, #1e1b4b 30%, #4c0519 70%, var(--red-dark) 100%);
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      top: -50%;
-      right: -20%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -30%;
-      left: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ===== HEADER ===== */
-    .header {
-      text-align: center;
-      padding: 40px 20px 30px;
-      margin-bottom: 30px;
-    }
-
-    .header-icon {
-      font-size: 60px;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 4px 12px rgba(37,99,235,0.5));
-    }
-
-    .header h1 {
-      font-size: clamp(26px, 5vw, 42px);
-      font-weight: 900;
-      background: linear-gradient(90deg, #93c5fd, #ffffff, #fca5a5);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .header p {
-      color: rgba(255,255,255,0.65);
-      font-size: 15px;
-      font-weight: 400;
-    }
-
-    .header-line {
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--blue-soft), var(--red-soft));
-      border-radius: 4px;
-      margin: 16px auto 0;
-    }
-
-    /* ===== STATS BAR ===== */
-    .stats-bar {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .stat-item {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px 24px;
-      text-align: center;
-      flex: 1;
-      min-width: 130px;
-      max-width: 200px;
-    }
-
-    .stat-num {
-      font-size: 32px;
-      font-weight: 800;
-      color: #93c5fd;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.6);
-      margin-top: 2px;
-    }
-
-    /* ===== FORM CARD ===== */
-    .form-card {
-      background: rgba(255,255,255,0.97);
-      border-radius: var(--radius);
-      padding: 36px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .form-card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
-      padding-bottom: 18px;
-      border-bottom: 2px solid var(--gray-200);
-    }
-
-    .form-card-header .icon-badge {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
-    }
-
-    .form-card-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--gray-800);
-    }
-
-    .form-card-header p {
-      font-size: 12px;
-      color: var(--gray-600);
-      margin-top: 2px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .form-group.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .form-group label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--gray-800);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .form-group label .req {
-      color: var(--red-light);
-      font-size: 14px;
-    }
-
-    .form-group label .opt {
-      background: var(--gray-200);
-      color: var(--gray-600);
-      font-size: 10px;
-      padding: 1px 7px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select {
-      padding: 12px 14px;
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius-sm);
-      font-family: 'Tajawal', sans-serif;
-      font-size: 14px;
-      color: var(--gray-800);
-      background: var(--gray-100);
-      transition: all 0.25s ease;
-      outline: none;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--blue-soft);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
-    }
-
-    .form-group input::placeholder { color: #94a3b8; }
-
-    /* ===== PLATE INPUT ===== */
-    .plate-section {
-      grid-column: 1 / -1;
-    }
-
-    .plate-preview-wrapper {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .plate-inputs-box {
-      flex: 1;
-      min-width: 260px;
-    }
-
-    .plate-fields {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .plate-letter-group {
-      display: flex;
-      gap: 7px;
-    }
-
-    .plate-letter {
-      width: 58px;
-      height: 58px;
-      border: 2px solid var(--gray-200);
-      border-radius: 10px;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      text-align: center;
-      background: var(--gray-100);
-      color: var(--gray-800);
-      transition: all 0.25s;
-      outline: none;
-    }
-
-    .plate-letter:focus {
-      border-color: var(--blue-soft);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
-    }
-
-    .plate-divider {
-      font-size: 26px;
-      color: var(--gray-600);
-      font-weight: 300;
-      padding: 0 2px;
-    }
-
-    .plate-number-input {
-      width: 120px;
-      height: 58px;
-      border: 2px solid var(--gray-200);
-      border-radius: 10px;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      text-align: center;
-      background: var(--gray-100);
-      color: var(--gray-800);
-      transition: all 0.25s;
-      outline: none;
-    }
-
-    .plate-number-input:focus {
-      border-color: var(--blue-soft);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
-    }
-
-    .plate-hint {
-      font-size: 11px;
-      color: var(--gray-600);
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ===== LIVE PLATE PREVIEW ===== */
-    .plate-preview {
-      background: #f8f4e8;
-      border: 3px solid #c9a227;
-      border-radius: 12px;
-      padding: 10px 16px;
-      min-width: 220px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.8);
-      position: relative;
-    }
-
-    .plate-preview::before {
-      content: '🇸🇦';
-      position: absolute;
-      top: -1px;
-      right: 8px;
-      font-size: 14px;
-    }
-
-    .plate-preview-top {
-      font-size: 10px;
-      color: #7a6b3a;
-      font-weight: 600;
-      letter-spacing: 3px;
-      margin-bottom: 4px;
-    }
-
-    .plate-preview-main {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 6px 0;
-    }
-
-    .plate-preview-letters {
-      font-size: 26px;
-      font-weight: 800;
-      color: #1a1a1a;
-      letter-spacing: 6px;
-      direction: rtl;
-    }
-
-    .plate-preview-sep {
-      width: 2px;
-      height: 36px;
-      background: linear-gradient(to bottom, transparent, #c9a227, transparent);
-    }
-
-    .plate-preview-numbers {
-      font-size: 26px;
-      font-weight: 800;
-      color: #1a1a1a;
-      letter-spacing: 4px;
-      direction: ltr;
-    }
-
-    .plate-preview-bottom {
-      font-size: 8px;
-      color: #7a6b3a;
-      font-weight: 500;
-      letter-spacing: 2px;
-      margin-top: 3px;
-    }
-
-    /* ===== BUTTONS ===== */
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 13px 28px;
-      border-radius: var(--radius-sm);
-      border: none;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
-      color: var(--white);
-      flex: 1;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(37,99,235,0.4);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #1d4ed8, var(--blue-dark));
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(37,99,235,0.5);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, var(--red-light), var(--red-mid));
-      color: var(--white);
-      box-shadow: 0 4px 16px rgba(220,38,38,0.35);
-    }
-
-    .btn-danger:hover {
-      background: linear-gradient(135deg, var(--red-soft), var(--red-light));
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background: var(--gray-200);
-      color: var(--gray-800);
-    }
-
-    .btn-secondary:hover {
-      background: var(--gray-200);
-      transform: translateY(-1px);
-    }
-
-    /* ===== SEARCH BAR ===== */
-    .search-wrapper {
-      margin-bottom: 22px;
-      position: relative;
-    }
-
-    .search-wrapper input {
-      width: 100%;
-      padding: 14px 20px 14px 50px;
-      border-radius: 14px;
-      border: none;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(12px);
-      color: var(--white);
-      font-family: 'Tajawal', sans-serif;
-      font-size: 14px;
-      outline: none;
-      border: 1px solid rgba(255,255,255,0.18);
-      transition: all 0.25s;
-    }
-
-    .search-wrapper input::placeholder { color: rgba(255,255,255,0.5); }
-    .search-wrapper input:focus {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.35);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 18px;
-      color: rgba(255,255,255,0.5);
-    }
-
-    /* ===== TABLE SECTION ===== */
-    .table-section {
-      background: rgba(255,255,255,0.97);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .table-header {
-      background: linear-gradient(135deg, var(--blue-dark) 0%, #1e1b4b 50%, #4c0519 100%);
-      padding: 20px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .table-header h3 {
-      color: var(--white);
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .badge-count {
-      background: var(--red-light);
-      color: var(--white);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
-
-    thead tr {
-      background: linear-gradient(90deg, var(--blue-pale), #f0f9ff);
-    }
-
-    thead th {
-      padding: 14px 18px;
-      text-align: right;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--blue-mid);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      border-bottom: 2px solid var(--gray-200);
-    }
-
-    tbody tr {
-      border-bottom: 1px solid var(--gray-200);
-      transition: background 0.18s;
-    }
-
-    tbody tr:hover { background: #f8faff; }
-    tbody tr:last-child { border-bottom: none; }
-
-    tbody td {
-      padding: 15px 18px;
-      font-size: 13px;
-      color: var(--gray-800);
-      vertical-align: middle;
-    }
-
-    /* ===== PLATE CELL ===== */
-    .plate-cell {
-      display: inline-flex;
-      align-items: center;
-      gap: 0;
-      background: #f8f4e8;
-      border: 2px solid #c9a227;
-      border-radius: 8px;
-      padding: 5px 12px;
-      font-weight: 800;
-      font-size: 14px;
-      color: #1a1a1a;
-      white-space: nowrap;
-      letter-spacing: 2px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .plate-cell-sep {
-      width: 1.5px;
-      height: 22px;
-      background: linear-gradient(to bottom, transparent, #c9a227, transparent);
-      margin: 0 10px;
-    }
-
-    /* ===== COLOR DOT ===== */
-    .color-dot-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .color-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.15);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-      flex-shrink: 0;
-    }
-
-    /* ===== ACTION BUTTONS ===== */
-    .action-btns {
-      display: flex;
-      gap: 8px;
-      flex-wrap: nowrap;
-    }
-
-    .btn-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      transition: all 0.2s;
-    }
-
-    .btn-edit {
-      background: var(--blue-pale);
-      color: var(--blue-mid);
-    }
-
-    .btn-edit:hover {
-      background: var(--blue-soft);
-      color: var(--white);
-      transform: scale(1.1);
-    }
-
-    .btn-del {
-      background: var(--red-pale);
-      color: var(--red-mid);
-    }
-
-    .btn-del:hover {
-      background: var(--red-soft);
-      color: var(--white);
-      transform: scale(1.1);
-    }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-
-    .empty-state .empty-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      opacity: 0.4;
-    }
-
-    .empty-state p {
-      color: var(--gray-600);
-      font-size: 15px;
-    }
-
-    .empty-state span {
-      font-size: 12px;
-      color: #94a3b8;
-      display: block;
-      margin-top: 4px;
-    }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--white);
-      border-radius: var(--radius);
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-      transform: scale(0.9) translateY(20px);
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
-
-    .modal-overlay.active .modal {
-      transform: scale(1) translateY(0);
-    }
-
-    .modal-head {
-      background: linear-gradient(135deg, var(--blue-dark), #1e1b4b 50%, var(--red-dark));
-      padding: 22px 26px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .modal-head h3 {
-      color: var(--white);
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-close {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: var(--white);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
-
-    .modal-body {
-      padding: 28px;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-
-    /* ===== TOAST ===== */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .toast {
-      background: var(--gray-800);
-      color: var(--white);
-      padding: 14px 20px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      animation: slideUp 0.3s ease;
-      min-width: 220px;
-      max-width: 320px;
-    }
-
-    .toast.success { border-right: 4px solid #22c55e; }
-    .toast.error   { border-right: 4px solid var(--red-soft); }
-    .toast.info    { border-right: 4px solid var(--blue-soft); }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-
-    /* ===== COLOR SELECT ===== */
-    .color-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .color-opt {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      padding: 7px 14px;
-      border-radius: 30px;
-      border: 2px solid var(--gray-200);
-      transition: all 0.2s;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--gray-800);
-    }
-
-    .color-opt:hover { border-color: var(--blue-soft); background: var(--blue-pale); }
-
-    .color-opt input { display: none; }
-
-    .color-opt input:checked ~ span.label {
-      color: var(--blue-mid);
-    }
-
-    .color-opt:has(input:checked) {
-      border-color: var(--blue-soft);
-      background: var(--blue-pale);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
-    }
-
-    .color-opt .dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.15);
-    }
-
-    /* ===== MOBILE ===== */
-    @media (max-width: 640px) {
-      body { padding: 12px; }
-
-      .form-card { padding: 22px 16px; }
-
-      .form-grid { grid-template-columns: 1fr; }
-
-      .form-group.full-width { grid-column: unset; }
-
-      .plate-fields { justify-content: center; }
-
-      .plate-letter { width: 50px; height: 50px; font-size: 18px; }
-
-      .plate-number-input { width: 100px; height: 50px; font-size: 18px; }
-
-      .plate-preview-wrapper { flex-direction: column; align-items: center; }
-
-      .plate-preview { min-width: unset; width: 100%; }
-
-      .btn-group { flex-direction: column; }
-
-      .btn-primary { min-width: unset; }
-
-      .action-btns { gap: 5px; }
-
-      table { min-width: 500px; }
-
-      .stat-item { min-width: 100px; }
-    }
-
-    /* ===== LETTER SELECT DROPDOWN ===== */
-    .plate-letter-select {
-      width: 58px;
-      height: 58px;
-      border: 2px solid var(--gray-200);
-      border-radius: 10px;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      text-align: center;
-      text-align-last: center;
-      background: var(--gray-100);
-      color: var(--gray-800);
-      transition: all 0.25s;
-      outline: none;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      padding: 0 4px;
-    }
-
-    .plate-letter-select:focus {
-      border-color: var(--blue-soft);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
-    }
-
-    @media (max-width: 640px) {
-      .plate-letter-select { width: 50px; height: 50px; font-size: 18px; }
-    }
-
-    /* ===== CONFIRM DELETE ===== */
-    .confirm-modal {
-      max-width: 400px;
-    }
-
-    .confirm-body {
-      padding: 30px 28px;
-      text-align: center;
-    }
-
-    .confirm-icon {
-      font-size: 52px;
-      margin-bottom: 14px;
-    }
-
-    .confirm-body h4 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--gray-800);
-      margin-bottom: 8px;
-    }
-
-    .confirm-body p {
-      font-size: 13px;
-      color: var(--gray-600);
-      margin-bottom: 24px;
-    }
-
-    .confirm-btns {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    /* name badge */
-    .name-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--blue-light), var(--blue-mid));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      font-size: 14px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .row-num {
-      color: #94a3b8;
-      font-weight: 600;
-      font-size: 13px;
-      text-align: center;
-    }
-
-    /* scroll style */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
-
-    /* Print / export */
-    .print-btn {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      color: var(--white);
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 8px 18px;
-      border-radius: 9px;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .print-btn:hover {
-      background: rgba(255,255,255,0.2);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>مرصد الأخبار العالمية</title>
+  <link rel="icon" type="image/jpeg" href="https://www.genspark.ai/api/files/s/mGxb1TCU" />
+  <link rel="apple-touch-icon" href="https://www.genspark.ai/api/files/s/mGxb1TCU" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="مرصد الأخبار" />
+  <meta name="theme-color" content="#0a1628" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
+<style>
+:root{
+  --bg:#0a1628;--bg2:#0d1e35;--card:#112240;--border:#1e3a5f;
+  --red:#c8102e;--gold:#d4af37;--orange:#f5a623;--cyan:#00d4ff;
+  --txt:#e8eaf0;--muted:#8892a4;--r:12px;
+  --h:68px;--ticker:30px;--filter:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px}
+/* HEADER */
+header{
+  position:fixed;top:0;inset-inline:0;z-index:1000;height:var(--h);
+  background:linear-gradient(135deg,#060e1a,#112240,#060e1a);
+  border-bottom:2px solid var(--red);
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;
+  box-shadow:0 2px 24px rgba(200,16,46,.35);
+}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo img{width:44px;height:44px;border-radius:50%;border:2px solid var(--red);object-fit:cover}
+.logo-text .t1{font-size:1.2rem;font-weight:900;color:#fff;line-height:1.2}
+.logo-text .t2{font-size:.68rem;color:var(--orange);font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.live{background:var(--red);color:#fff;font-size:.68rem;font-weight:800;padding:3px 10px;
+  border-radius:20px;display:flex;align-items:center;gap:5px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1s infinite}
+.refresh-btn{background:var(--red);color:#fff;border:none;border-radius:8px;
+  padding:7px 14px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.refresh-btn:hover{background:#a00c26}
+.refresh-btn.spin i{animation:rotate 1s linear infinite}
+/* TICKER */
+.ticker{
+  position:fixed;top:var(--h);inset-inline:0;z-index:999;
+  height:var(--ticker);background:var(--red);display:flex;align-items:center;overflow:hidden;
+}
+.ticker-label{
+  background:#7a0018;color:#fff;font-size:.72rem;font-weight:800;
+  padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;
+}
+.ticker-wrap{flex:1;overflow:hidden;position:relative}
+.ticker-inner{display:inline-flex;white-space:nowrap;animation:scroll 90s linear infinite}
+.ticker-inner span{font-size:.75rem;color:#fff;font-weight:600;padding:0 18px;cursor:pointer}
+.ticker-inner span:hover{text-decoration:underline}
+.ticker-dot{color:rgba(255,255,255,.4);padding:0 4px}
+/* FILTERS */
+.filters{
+  position:fixed;top:calc(var(--h) + var(--ticker));inset-inline:0;z-index:998;
+  height:var(--filter);background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:7px;padding:0 14px;overflow-x:auto;scrollbar-width:none;
+}
+.filters::-webkit-scrollbar{display:none}
+.srch{position:relative;flex-shrink:0}
+.srch i{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.78rem}
+.srch input{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  color:var(--txt);font-family:'Cairo',sans-serif;font-size:.8rem;
+  padding:6px 28px 6px 10px;width:180px;outline:none;transition:border .2s;
+}
+.srch input:focus{border-color:var(--red)}
+.srch input::placeholder{color:var(--muted)}
+.fbtn{
+  background:var(--bg);border:1px solid var(--border);color:var(--muted);
+  border-radius:20px;padding:4px 12px;font-family:'Cairo',sans-serif;
+  font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:.2s;flex-shrink:0;
+}
+.fbtn:hover{border-color:var(--red);color:var(--txt)}
+.fbtn.on{background:var(--red);border-color:var(--red);color:#fff}
+/* MAIN */
+main{
+  max-width:1380px;margin:0 auto;
+  padding:calc(var(--h) + var(--ticker) + var(--filter) + 16px) 14px 40px;
+}
+/* STATS */
+.stats{display:flex;align-items:center;gap:16px;padding:8px 0 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;margin-bottom:14px}
+.stat{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--muted)}
+.stat i{color:var(--red);font-size:.75rem}.stat strong{color:var(--txt)}
+/* SECTION */
+.sec{margin-bottom:34px}
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;margin-top:20px;font-size:1rem;font-weight:800}
+.bar{width:4px;height:20px;border-radius:2px;background:var(--red)}
+.cnt{background:var(--card);color:var(--muted);font-size:.68rem;padding:2px 8px;border-radius:12px;border:1px solid var(--border)}
+/* FEATURED */
+.feat-wrap{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:26px}
+.feat-main{
+  position:relative;border-radius:var(--r);overflow:hidden;min-height:350px;
+  border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;
+  display:block;transition:transform .3s;background:var(--card);
+}
+.feat-main:hover{transform:translateY(-3px);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.feat-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.feat-overlay{
+  position:absolute;bottom:0;inset-inline:0;
+  background:linear-gradient(to top,rgba(0,0,0,.95),rgba(0,0,0,.45) 65%,transparent);
+  padding:22px 18px 16px;
+}
+.feat-src{display:inline-block;color:#fff;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:4px;margin-bottom:7px}
+.feat-main h2{font-size:1.1rem;font-weight:800;line-height:1.5;color:#fff;margin-bottom:5px}
+.feat-meta{font-size:.68rem;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px}
+.feat-side{display:flex;flex-direction:column;gap:9px}
+/* SIDE CARD */
+.side-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;
+  display:flex;gap:10px;padding:10px;transition:.25s;flex:1;
+}
+.side-card:hover{border-color:var(--red);transform:translateX(3px)}
+.sc-img{width:84px;height:68px;border-radius:7px;overflow:hidden;flex-shrink:0;background:var(--bg2)}
+.sc-img img{width:100%;height:100%;object-fit:cover}
+.sc-body{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.sc-title{font-size:.78rem;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.sc-src{font-size:.63rem;font-weight:700}
+.sc-time{font-size:.6rem;color:var(--muted)}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px}
+/* CARD */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;transition:.25s;animation:fadeIn .4s ease;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 6px 28px rgba(0,0,0,.5);border-color:var(--red)}
+.card:hover .cimg img{transform:scale(1.05)}
+.cimg{position:relative;height:172px;overflow:hidden;background:linear-gradient(135deg,var(--bg),var(--bg2))}
+.cimg img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg2)}
+.no-img i{font-size:2.5rem;color:var(--border)}
+.src-tag{position:absolute;top:9px;right:9px;color:#fff;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:4px;z-index:2;box-shadow:0 2px 5px rgba(0,0,0,.4)}
+.tr-tag{position:absolute;top:9px;left:9px;background:rgba(212,175,55,.9);color:#000;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:4px;z-index:2}
+.cbody{padding:12px;flex:1;display:flex;flex-direction:column}
+.ctitle{font-size:.88rem;font-weight:700;line-height:1.55;color:var(--txt);margin-bottom:8px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cdesc{font-size:.74rem;color:var(--muted);line-height:1.5;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cfoot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.csrc{font-size:.68rem;font-weight:700;color:var(--orange)}
+.ctime{font-size:.62rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+/* TOOLS */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;text-align:center;cursor:pointer;text-decoration:none;color:inherit;
+  transition:.3s;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.tool:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:0 6px 22px rgba(0,0,0,.4)}
+.tool-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.tool-name{font-size:.88rem;font-weight:800}
+.tool-desc{font-size:.7rem;color:var(--muted);line-height:1.5}
+/* SKELETON */
+.sk{background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
+.sk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.sk-img{height:172px}.sk-line{height:13px;margin:8px 12px}.sk-line.s{width:55%}.sk-line.m{width:78%}
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;color:var(--muted);text-align:center;gap:10px;grid-column:1/-1}
+.empty i{font-size:2.5rem;color:var(--border)}.empty p{font-size:.86rem}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-width:580px;width:92%;max-height:88vh;overflow-y:auto;padding:22px;position:relative;animation:fadeIn .3s ease}
+.modal-x{position:absolute;top:11px;left:11px;background:var(--red);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.modal img{width:100%;border-radius:8px;margin-bottom:11px;max-height:200px;object-fit:cover}
+.modal h3{font-size:.98rem;font-weight:800;margin-bottom:9px;line-height:1.55}
+.modal p{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.mact{display:flex;gap:9px;flex-wrap:wrap}
+.btn-r{background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;text-decoration:none;transition:.2s}
+.btn-r:hover{background:#a00c26}
+.btn-g{background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer;transition:.2s}
+.btn-g:hover{border-color:var(--red)}
+/* TOAST */
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:9px 18px;display:flex;align-items:center;gap:9px;
+  font-size:.8rem;color:var(--txt);z-index:4000;transition:transform .35s ease;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);min-width:220px;justify-content:center;
+}
+.toast.up{transform:translateX(-50%) translateY(0)}
+.toast i{color:var(--gold)}
+/* footer */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:16px;text-align:center;color:var(--muted);font-size:.73rem;line-height:1.9}
+footer a{color:var(--orange);text-decoration:none}footer a:hover{text-decoration:underline}
+/* ANIMATIONS */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes rotate{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .feat-wrap{grid-template-columns:1fr}
+  .feat-main{min-height:250px}
+  .feat-side{flex-direction:row;overflow-x:auto;gap:8px}
+  .feat-side .side-card{min-width:230px}
+}
+@media(max-width:600px){
+  header{padding:0 10px}
+  .logo-text .t1{font-size:1rem}
+  .refresh-btn span{display:none}
+  .grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:1fr}
+  main{padding-inline:10px}
+  .srch input{width:148px}
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-icon">🚗</div>
-    <h1>إدارة لوحات السيارات</h1>
-    <p>النظام السعودي لتسجيل وإدارة بيانات المركبات</p>
-    <div class="header-line"></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-bar">
-    <div class="stat-item">
-      <div class="stat-num" id="totalCount">0</div>
-      <div class="stat-label">إجمالي السيارات</div>
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">
+    <img src="https://www.genspark.ai/api/files/s/mGxb1TCU" alt="logo" onerror="this.style.display='none'" />
+    <div class="logo-text">
+      <div class="t1">مرصد الأخبار العالمية</div>
+      <div class="t2">World News Observatory · أخبار مباشرة</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-num" id="todayCount">0</div>
-      <div class="stat-label">مضافة اليوم</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num" id="colorCount">0</div>
-      <div class="stat-label">ألوان مختلفة</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num" id="typeCount">0</div>
-      <div class="stat-label">أنواع مختلفة</div>
-    </div>
-  </div>
-
-  <!-- ADD TOGGLE BUTTON -->
-  <div style="display:flex; justify-content:center; margin-bottom:20px;">
-    <button class="btn btn-primary" type="button" onclick="toggleAddForm()" id="toggleFormBtn" style="max-width:280px;">
-      ➕ إضافة سيارة جديدة
+  </a>
+  <div class="hdr-right">
+    <div class="live"><div class="live-dot"></div>مباشر</div>
+    <button class="refresh-btn" id="rfBtn" onclick="refreshAll()">
+      <i class="fas fa-sync-alt"></i><span>تحديث</span>
     </button>
   </div>
+</header>
 
-  <!-- ADD FORM -->
-  <div class="form-card" id="addFormCard" style="display:none;">
-    <div class="form-card-header">
-      <div class="icon-badge">➕</div>
-      <div>
-        <h2 id="formTitle">إضافة سيارة جديدة</h2>
-        <p id="formSubtitle">أدخل بيانات السيارة أدناه</p>
-      </div>
-    </div>
-
-    <div class="form-grid">
-
-      <!-- NAME -->
-      <div class="form-group">
-        <label>👤 الاسم <span class="req">*</span></label>
-        <input type="text" id="ownerName" placeholder="اسم صاحب السيارة" />
-      </div>
-
-      <!-- COLOR -->
-      <div class="form-group">
-        <label>🎨 لون السيارة <span class="opt">اختياري</span></label>
-        <select id="carColor">
-          <option value="">-- اختر اللون --</option>
-          <option value="أبيض" data-color="#ffffff">أبيض</option>
-          <option value="أسود" data-color="#1a1a1a">أسود</option>
-          <option value="رمادي" data-color="#808080">رمادي</option>
-          <option value="فضي" data-color="#c0c0c0">فضي</option>
-          <option value="أحمر" data-color="#dc2626">أحمر</option>
-          <option value="أزرق" data-color="#2563eb">أزرق</option>
-          <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
-          <option value="أخضر" data-color="#16a34a">أخضر</option>
-          <option value="بيج" data-color="#d4b483">بيج</option>
-          <option value="بني" data-color="#92400e">بني</option>
-          <option value="ذهبي" data-color="#f59e0b">ذهبي</option>
-          <option value="برتقالي" data-color="#f97316">برتقالي</option>
-          <option value="زيتي" data-color="#4d7c0f">زيتي</option>
-          <option value="كحلي" data-color="#1e3a5f">كحلي</option>
-          <option value="بنفسجي" data-color="#7c3aed">بنفسجي</option>
-          <option value="وردي" data-color="#ec4899">وردي</option>
-        </select>
-      </div>
-
-      <!-- CAR TYPE -->
-      <div class="form-group">
-        <label>🏷️ نوع السيارة <span class="opt">اختياري</span></label>
-        <select id="carType">
-          <option value="">-- اختر النوع --</option>
-          <option>تويوتا</option>
-          <option>لكزس</option>
-          <option>نيسان</option>
-          <option>هوندا</option>
-          <option>مرسيدس</option>
-          <option>بي إم دبليو</option>
-          <option>أودي</option>
-          <option>هيونداي</option>
-          <option>كيا</option>
-          <option>فورد</option>
-          <option>شيفروليه</option>
-          <option>جيب</option>
-          <option>لاند روفر</option>
-          <option>بورش</option>
-          <option>فيراري</option>
-          <option>لمبرغيني</option>
-          <option>رولز رويس</option>
-          <option>رنج روفر</option>
-          <option>جي إم سي</option>
-          <option>سوزوكي</option>
-          <option>ميتسوبيشي</option>
-          <option>مازدا</option>
-          <option>فولكس واجن</option>
-          <option>بيجو</option>
-          <option>رينو</option>
-          <option>أخرى</option>
-        </select>
-      </div>
-
-      <!-- MODEL -->
-      <div class="form-group">
-        <label>📅 موديل السيارة <span class="opt">اختياري</span></label>
-        <input type="number" id="carModel" placeholder="مثال: 2024" min="1980" max="2030" />
-      </div>
-
-      <!-- PLATE -->
-      <div class="form-group plate-section">
-        <label>🔢 رقم اللوحة <span class="req">*</span></label>
-        <div class="plate-preview-wrapper">
-          <div class="plate-inputs-box">
-            <div class="plate-fields">
-              <div class="plate-letter-group">
-                <select class="plate-letter-select" id="letter1" onchange="updatePlatePreview()">
-                  <option value="">-</option>
-                  <option>أ</option><option>ب</option><option>ح</option>
-                  <option>د</option><option>ر</option><option>س</option>
-                  <option>ص</option><option>ط</option><option>ع</option>
-                  <option>ق</option><option>ك</option><option>ل</option>
-                  <option>م</option><option>ن</option><option>ه</option>
-                  <option>و</option><option>ي</option>
-                </select>
-                <select class="plate-letter-select" id="letter2" onchange="updatePlatePreview()">
-                  <option value="">-</option>
-                  <option>أ</option><option>ب</option><option>ح</option>
-                  <option>د</option><option>ر</option><option>س</option>
-                  <option>ص</option><option>ط</option><option>ع</option>
-                  <option>ق</option><option>ك</option><option>ل</option>
-                  <option>م</option><option>ن</option><option>ه</option>
-                  <option>و</option><option>ي</option>
-                </select>
-                <select class="plate-letter-select" id="letter3" onchange="updatePlatePreview()">
-                  <option value="">-</option>
-                  <option>أ</option><option>ب</option><option>ح</option>
-                  <option>د</option><option>ر</option><option>س</option>
-                  <option>ص</option><option>ط</option><option>ع</option>
-                  <option>ق</option><option>ك</option><option>ل</option>
-                  <option>م</option><option>ن</option><option>ه</option>
-                  <option>و</option><option>ي</option>
-                </select>
-              </div>
-              <span class="plate-divider">|</span>
-              <input
-                type="text"
-                id="plateNumber"
-                class="plate-number-input"
-                placeholder="1234"
-                maxlength="4"
-                oninput="this.value=this.value.replace(/[^0-9]/g,''); updatePlatePreview()"
-              />
-            </div>
-            <div class="plate-hint">
-              ℹ️ اختر ٣ حروف عربية · أدخل من ١ إلى ٤ أرقام
-            </div>
-          </div>
-
-          <!-- LIVE PREVIEW -->
-          <div class="plate-preview">
-            <div class="plate-preview-top">KINGDOM OF SAUDI ARABIA</div>
-            <div class="plate-preview-main">
-              <div class="plate-preview-letters" id="prevLetters">- - -</div>
-              <div class="plate-preview-sep"></div>
-              <div class="plate-preview-numbers" id="prevNumbers">----</div>
-            </div>
-            <div class="plate-preview-bottom">المملكة العربية السعودية</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- BUTTONS -->
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="submitForm()">
-        <span id="submitIcon">💾</span>
-        <span id="submitText">حفظ السيارة</span>
-      </button>
-      <button class="btn btn-secondary" onclick="resetForm()">
-        🔄 إعادة تعيين
-      </button>
-    </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-label"><i class="fas fa-rss"></i>عاجل</div>
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="tickerInner"><span>جاري تحميل آخر الأخبار...</span></div>
   </div>
-
-  <!-- TABLE SECTION -->
-  <div class="search-wrapper">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="ابحث بالاسم أو رقم اللوحة أو نوع السيارة..." oninput="renderTable()" />
-  </div>
-
-  <div class="table-section">
-    <div class="table-header">
-      <h3>
-        📋 سجل السيارات
-        <span class="badge-count" id="tableCount">0</span>
-      </h3>
-      <button class="print-btn" onclick="window.print()">🖨️ طباعة</button>
-    </div>
-
-    <div class="table-responsive">
-      <table id="carsTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>الاسم</th>
-            <th>لوحة السيارة</th>
-            <th>نوع السيارة</th>
-            <th>الموديل</th>
-            <th>اللون</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <!-- Rows injected by JS -->
-        </tbody>
-      </table>
-      <div id="emptyState" class="empty-state" style="display:none">
-        <div class="empty-icon">🚘</div>
-        <p>لا توجد سيارات مسجلة حتى الآن</p>
-        <span>ابدأ بإضافة سيارة جديدة من النموذج أعلاه</span>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- EDIT MODAL -->
-<div class="modal-overlay" id="editModal">
+<!-- FILTERS -->
+<nav class="filters" id="filters">
+  <div class="srch"><i class="fas fa-search"></i><input type="text" id="q" placeholder="ابحث في الأخبار..." oninput="doFilter()" /></div>
+  <button class="fbtn on" onclick="setFilter('all',this)">🌐 الكل</button>
+  <button class="fbtn" onclick="setFilter('arabic',this)">🟢 عربي</button>
+  <button class="fbtn" onclick="setFilter('intl',this)">🌍 دولي</button>
+  <button class="fbtn" onclick="setFilter('tr',this)">🔤 مترجم</button>
+  <button class="fbtn" onclick="setSrc('aljazeera',this)">الجزيرة</button>
+  <button class="fbtn" onclick="setSrc('skynews',this)">سكاي نيوز</button>
+  <button class="fbtn" onclick="setSrc('bbc',this)">BBC</button>
+  <button class="fbtn" onclick="setSrc('cnn',this)">CNN</button>
+  <button class="fbtn" onclick="setSrc('alarabiya',this)">العربية</button>
+  <button class="fbtn" onclick="setSrc('rt',this)">RT</button>
+  <button class="fbtn" onclick="setSrc('france24',this)">فرانس24</button>
+  <button class="fbtn" onclick="setSrc('reuters',this)">Reuters</button>
+  <button class="fbtn" onclick="setSrc('apnews',this)">AP News</button>
+  <button class="fbtn" onclick="setSrc('nytimes',this)">NYT</button>
+  <button class="fbtn" onclick="setSrc('guardian',this)">Guardian</button>
+  <button class="fbtn" onclick="setSrc('bloomberg',this)">Bloomberg</button>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="stats">
+    <div class="stat"><i class="fas fa-newspaper"></i>مصادر: <strong>14</strong></div>
+    <div class="stat"><i class="fas fa-globe"></i>أخبار: <strong id="sCount">جاري التحميل</strong></div>
+    <div class="stat"><i class="fas fa-language"></i>مترجمة: <strong id="sTr">0</strong></div>
+    <div class="stat"><i class="fas fa-clock" style="color:var(--gold)"></i>آخر تحديث: <strong id="sTime">—</strong></div>
+  </div>
+
+  <!-- Featured -->
+  <div id="featSec" class="sec">
+    <div class="sec-hd"><div class="bar"></div><i class="fas fa-star" style="color:var(--gold)"></i>أبرز الأخبار</div>
+    <div class="feat-wrap" id="featGrid">
+      <div class="sk-card" style="min-height:350px"><div class="sk" style="height:100%"></div></div>
+      <div class="feat-side">
+        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
+        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
+        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arabic -->
+  <div id="arSec" class="sec">
+    <div class="sec-hd"><div class="bar"></div><i class="fas fa-satellite-dish"></i>المصادر العربية<span class="cnt" id="arCnt">0</span></div>
+    <div class="grid" id="arGrid">
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+    </div>
+  </div>
+
+  <!-- International -->
+  <div id="intlSec" class="sec">
+    <div class="sec-hd"><div class="bar" style="background:var(--gold)"></div><i class="fas fa-globe-americas" style="color:var(--gold)"></i>المصادر الدولية — مترجمة تلقائياً<span class="cnt" id="intlCnt">0</span></div>
+    <div class="grid" id="intlGrid">
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="sec">
+    <div class="sec-hd"><div class="bar" style="background:var(--cyan)"></div><i class="fas fa-satellite" style="color:var(--cyan)"></i>أدوات المتابعة التفاعلية</div>
+    <div class="tools-grid">
+      <a href="https://www.flightradar24.com" target="_blank" rel="noopener" class="tool">
+        <div class="tool-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-plane" style="color:#fff"></i></div>
+        <span class="tool-name">Flightradar24</span>
+        <span class="tool-desc">متابعة حركة الطيران العسكري والمدني لحظةً بلحظة حول العالم</span>
+      </a>
+      <a href="https://liveuamap.com" target="_blank" rel="noopener" class="tool">
+        <div class="tool-icon" style="background:linear-gradient(135deg,#ef4444,#b91c1c)"><i class="fas fa-map-marked-alt" style="color:#fff"></i></div>
+        <span class="tool-name">Liveuamap</span>
+        <span class="tool-desc">خرائط تفاعلية حية لتغطية النزاعات والحروب والأحداث العسكرية</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="overlay" id="ov" onclick="ovClick(event)">
   <div class="modal">
-    <div class="modal-head">
-      <h3>✏️ تعديل بيانات السيارة</h3>
-      <button class="modal-close" onclick="closeEditModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:16px;">
-
-        <div class="form-group">
-          <label>👤 الاسم <span class="req">*</span></label>
-          <input type="text" id="editName" placeholder="اسم صاحب السيارة" />
-        </div>
-
-        <div class="form-group">
-          <label>🎨 لون السيارة <span class="opt">اختياري</span></label>
-          <select id="editColor">
-            <option value="">-- اختر اللون --</option>
-            <option value="أبيض" data-color="#ffffff">أبيض</option>
-            <option value="أسود" data-color="#1a1a1a">أسود</option>
-            <option value="رمادي" data-color="#808080">رمادي</option>
-            <option value="فضي" data-color="#c0c0c0">فضي</option>
-            <option value="أحمر" data-color="#dc2626">أحمر</option>
-            <option value="أزرق" data-color="#2563eb">أزرق</option>
-            <option value="أزرق سماوي" data-color="#0ea5e9">أزرق سماوي</option>
-            <option value="أخضر" data-color="#16a34a">أخضر</option>
-            <option value="بيج" data-color="#d4b483">بيج</option>
-            <option value="بني" data-color="#92400e">بني</option>
-            <option value="ذهبي" data-color="#f59e0b">ذهبي</option>
-            <option value="برتقالي" data-color="#f97316">برتقالي</option>
-            <option value="زيتي" data-color="#4d7c0f">زيتي</option>
-            <option value="كحلي" data-color="#1e3a5f">كحلي</option>
-            <option value="بنفسجي" data-color="#7c3aed">بنفسجي</option>
-            <option value="وردي" data-color="#ec4899">وردي</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>🏷️ نوع السيارة <span class="opt">اختياري</span></label>
-          <select id="editType">
-            <option value="">-- اختر النوع --</option>
-            <option>تويوتا</option><option>لكزس</option><option>نيسان</option>
-            <option>هوندا</option><option>مرسيدس</option><option>بي إم دبليو</option>
-            <option>أودي</option><option>هيونداي</option><option>كيا</option>
-            <option>فورد</option><option>شيفروليه</option><option>جيب</option>
-            <option>لاند روفر</option><option>بورش</option><option>فيراري</option>
-            <option>لمبرغيني</option><option>رولز رويس</option><option>رنج روفر</option>
-            <option>جي إم سي</option><option>سوزوكي</option><option>ميتسوبيشي</option>
-            <option>مازدا</option><option>فولكس واجن</option><option>بيجو</option>
-            <option>رينو</option><option>أخرى</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>📅 الموديل <span class="opt">اختياري</span></label>
-          <input type="number" id="editModel" placeholder="مثال: 2024" min="1980" max="2030" />
-        </div>
-
-        <div class="form-group" style="grid-column:1/-1;">
-          <label>🔢 رقم اللوحة <span class="req">*</span></label>
-          <div class="plate-fields">
-            <div class="plate-letter-group">
-              <select class="plate-letter-select" id="editL1" onchange="updateEditPreview()">
-                <option value="">-</option>
-                <option>أ</option><option>ب</option><option>ح</option>
-                <option>د</option><option>ر</option><option>س</option>
-                <option>ص</option><option>ط</option><option>ع</option>
-                <option>ق</option><option>ك</option><option>ل</option>
-                <option>م</option><option>ن</option><option>ه</option>
-                <option>و</option><option>ي</option>
-              </select>
-              <select class="plate-letter-select" id="editL2" onchange="updateEditPreview()">
-                <option value="">-</option>
-                <option>أ</option><option>ب</option><option>ح</option>
-                <option>د</option><option>ر</option><option>س</option>
-                <option>ص</option><option>ط</option><option>ع</option>
-                <option>ق</option><option>ك</option><option>ل</option>
-                <option>م</option><option>ن</option><option>ه</option>
-                <option>و</option><option>ي</option>
-              </select>
-              <select class="plate-letter-select" id="editL3" onchange="updateEditPreview()">
-                <option value="">-</option>
-                <option>أ</option><option>ب</option><option>ح</option>
-                <option>د</option><option>ر</option><option>س</option>
-                <option>ص</option><option>ط</option><option>ع</option>
-                <option>ق</option><option>ك</option><option>ل</option>
-                <option>م</option><option>ن</option><option>ه</option>
-                <option>و</option><option>ي</option>
-              </select>
-            </div>
-            <span class="plate-divider">|</span>
-            <input
-              type="text"
-              id="editNum"
-              class="plate-number-input"
-              placeholder="1234"
-              maxlength="4"
-              oninput="this.value=this.value.replace(/[^0-9]/g,''); updateEditPreview()"
-            />
-          </div>
-          <div style="margin-top:12px">
-            <div class="plate-preview" style="max-width:260px; margin:0 auto;">
-              <div class="plate-preview-top">KINGDOM OF SAUDI ARABIA</div>
-              <div class="plate-preview-main">
-                <div class="plate-preview-letters" id="editPrevLetters">- - -</div>
-                <div class="plate-preview-sep"></div>
-                <div class="plate-preview-numbers" id="editPrevNumbers">----</div>
-              </div>
-              <div class="plate-preview-bottom">المملكة العربية السعودية</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="btn-group" style="margin-top:24px;">
-        <button class="btn btn-primary" onclick="saveEdit()">💾 حفظ التعديلات</button>
-        <button class="btn btn-secondary" onclick="closeEditModal()">إلغاء</button>
-      </div>
+    <button class="modal-x" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    <img id="mImg" src="" alt="" style="display:none" />
+    <div id="mSrc"></div>
+    <h3 id="mTitle"></h3>
+    <p id="mDesc"></p>
+    <div class="mact">
+      <a id="mLink" href="#" target="_blank" rel="noopener" class="btn-r"><i class="fas fa-external-link-alt"></i>اقرأ الخبر من المصدر</a>
+      <button class="btn-g" onclick="closeModal()">إغلاق</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal confirm-modal">
-    <div class="modal-head">
-      <h3>🗑️ تأكيد الحذف</h3>
-      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
-    </div>
-    <div class="confirm-body">
-      <div class="confirm-icon">⚠️</div>
-      <h4>هل أنت متأكد من الحذف؟</h4>
-      <p>سيتم حذف بيانات السيارة نهائياً ولا يمكن استرجاعها.</p>
-      <div class="confirm-btns">
-        <button class="btn btn-danger" onclick="confirmDelete()">🗑️ نعم، احذف</button>
-        <button class="btn btn-secondary" onclick="closeDeleteModal()">إلغاء</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-spinner fa-spin"></i><span id="toastTxt">جاري التحميل...</span></div>
 
-<!-- TOAST CONTAINER -->
-<div class="toast-container" id="toastContainer"></div>
+<footer>
+  <strong style="color:var(--txt)">مرصد الأخبار العالمية</strong> — مصادر:
+  <a href="https://aljazeera.net" target="_blank">الجزيرة</a> •
+  <a href="https://skynewsarabia.com" target="_blank">سكاي نيوز</a> •
+  <a href="https://bbc.com/arabic" target="_blank">BBC</a> •
+  <a href="https://arabic.cnn.com" target="_blank">CNN</a> •
+  <a href="https://alarabiya.net" target="_blank">العربية</a> •
+  <a href="https://arabic.rt.com" target="_blank">RT</a> •
+  <a href="https://france24.com/ar" target="_blank">فرانس24</a> •
+  <a href="https://reuters.com" target="_blank">Reuters</a> •
+  <a href="https://apnews.com" target="_blank">AP</a> •
+  <a href="https://nytimes.com" target="_blank">NYT</a> •
+  <a href="https://wsj.com" target="_blank">WSJ</a> •
+  <a href="https://theguardian.com" target="_blank">Guardian</a> •
+  <a href="https://bloomberg.com" target="_blank">Bloomberg</a>
+  <br>الأخبار الإنجليزية تُترجم تلقائياً • اضغط أي خبر للانتقال للمصدر الأصلي
+</footer>
 
 <script>
-  // ==============================
-  // DATA STORE
-  // ==============================
-  let cars = JSON.parse(localStorage.getItem('saudiCarPlates') || '[]');
-  let editIndex = -1;
-  let deleteIndex = -1;
-  let editMode = false;
+// ============================================================
+//  SOURCES
+// ============================================================
+const SRCS=[
+  {id:'aljazeera',name:'الجزيرة نت',color:'#e8282b',cat:'arabic',lang:'ar',
+   feeds:['https://www.aljazeera.net/xml/rss2.0.xml'],site:'https://www.aljazeera.net'},
+  {id:'skynews',name:'سكاي نيوز عربية',color:'#00a3e0',cat:'arabic',lang:'ar',
+   feeds:['https://www.skynewsarabia.com/rss.xml'],site:'https://www.skynewsarabia.com'},
+  {id:'bbc',name:'BBC عربي',color:'#bb1919',cat:'arabic',lang:'ar',
+   feeds:['https://feeds.bbci.co.uk/arabic/rss.xml'],site:'https://www.bbc.com/arabic'},
+  {id:'cnn',name:'CNN بالعربية',color:'#cc0000',cat:'arabic',lang:'ar',
+   feeds:['https://arabic.cnn.com/api/v1/rss/rss.xml'],site:'https://arabic.cnn.com'},
+  {id:'alarabiya',name:'العربية نت',color:'#005ea5',cat:'arabic',lang:'ar',
+   feeds:['https://www.alarabiya.net/rss.xml'],site:'https://www.alarabiya.net'},
+  {id:'rt',name:'روسيا اليوم',color:'#007dc6',cat:'arabic',lang:'ar',
+   feeds:['https://arabic.rt.com/rss/'],site:'https://arabic.rt.com'},
+  {id:'france24',name:'فرانس 24',color:'#003082',cat:'arabic',lang:'ar',
+   feeds:['https://www.france24.com/ar/rss'],site:'https://www.france24.com/ar'},
+  {id:'reuters',name:'رويترز',color:'#ff671f',cat:'intl',lang:'en',
+   feeds:['https://feeds.reuters.com/reuters/topNews','https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best'],site:'https://www.reuters.com'},
+  {id:'apnews',name:'أسوشيتد برس',color:'#d10000',cat:'intl',lang:'en',
+   feeds:['https://apnews.com/index.rss'],site:'https://apnews.com'},
+  {id:'nytimes',name:'نيويورك تايمز',color:'#333',cat:'intl',lang:'en',
+   feeds:['https://rss.nytimes.com/services/xml/rss/nyt/World.xml','https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml'],site:'https://www.nytimes.com'},
+  {id:'wsj',name:'وول ستريت جورنال',color:'#1d477b',cat:'intl',lang:'en',
+   feeds:['https://feeds.a.dj.com/rss/RSSWorldNews.xml'],site:'https://www.wsj.com'},
+  {id:'guardian',name:'ذا غارديان',color:'#052962',cat:'intl',lang:'en',
+   feeds:['https://www.theguardian.com/world/rss'],site:'https://www.theguardian.com'},
+  {id:'bloomberg',name:'بلومبيرغ',color:'#1a1a1a',cat:'intl',lang:'en',
+   feeds:['https://feeds.bloomberg.com/politics/news.rss','https://feeds.bloomberg.com/markets/news.rss'],site:'https://www.bloomberg.com'},
+];
 
-  // COLOR MAP
-  const colorMap = {
-    'أبيض': '#f1f5f9', 'أسود': '#1a1a1a', 'رمادي': '#808080',
-    'فضي': '#c0c0c0', 'أحمر': '#dc2626', 'أزرق': '#2563eb',
-    'أزرق سماوي': '#0ea5e9', 'أخضر': '#16a34a', 'بيج': '#d4b483',
-    'بني': '#92400e', 'ذهبي': '#f59e0b', 'برتقالي': '#f97316',
-    'زيتي': '#4d7c0f', 'كحلي': '#1e3a5f', 'بنفسجي': '#7c3aed', 'وردي': '#ec4899'
+// ============================================================
+//  PROXY STRATEGIES
+// ============================================================
+async function fetchFeed(feedUrl){
+  const encoded=encodeURIComponent(feedUrl);
+
+  // 1. rss2json.com — returns clean JSON
+  try{
+    const u=`https://api.rss2json.com/v1/api.json?rss_url=${encoded}&count=12`;
+    const r=await fetch(u,{signal:AbortSignal.timeout(10000)});
+    if(r.ok){const d=await r.json();if(d.status==='ok'&&d.items?.length>0)return{type:'rss2json',data:d};}
+  }catch(e){}
+
+  // 2. feedparser.xyz
+  try{
+    const u=`https://feedparser.xyz/api/parse?url=${encoded}`;
+    const r=await fetch(u,{signal:AbortSignal.timeout(10000)});
+    if(r.ok){const d=await r.json();if(d.entries?.length>0)return{type:'feedparser',data:d};}
+  }catch(e){}
+
+  // 3. allorigins.win
+  try{
+    const u=`https://api.allorigins.win/get?url=${encoded}`;
+    const r=await fetch(u,{signal:AbortSignal.timeout(11000)});
+    if(r.ok){const d=await r.json();if(d.contents&&d.contents.length>200)return{type:'xml',data:d.contents};}
+  }catch(e){}
+
+  // 4. corsproxy.io
+  try{
+    const u=`https://corsproxy.io/?${encoded}`;
+    const r=await fetch(u,{signal:AbortSignal.timeout(11000)});
+    if(r.ok){const t=await r.text();if(t&&t.length>200)return{type:'xml',data:t};}
+  }catch(e){}
+
+  // 5. cors.bridged.cc
+  try{
+    const u=`https://cors.bridged.cc/${feedUrl}`;
+    const r=await fetch(u,{headers:{'x-cors-grida-api-key':'temp'},signal:AbortSignal.timeout(10000)});
+    if(r.ok){const t=await r.text();if(t&&t.length>200)return{type:'xml',data:t};}
+  }catch(e){}
+
+  throw new Error('all proxies failed');
+}
+
+function parseRss2json(d,src){
+  return (d.items||[]).slice(0,10).map((it,i)=>{
+    const img=it.enclosure?.link||it.thumbnail||extractImg(it.description||it.content||'')||'';
+    const desc=strip(it.description||it.content||'').substring(0,300);
+    if(!it.title||!it.link) return null;
+    return mk(src,i,it.title.trim(),it.link,desc,img,it.pubDate||'');
+  }).filter(Boolean);
+}
+
+function parseFeedparser(d,src){
+  return (d.entries||[]).slice(0,10).map((it,i)=>{
+    const img=it.media?.content?.[0]?.url||it.image?.href||extractImg(it.summary||it.content||'')||'';
+    const desc=strip(it.summary||it.content||'').substring(0,300);
+    const link=it.link||it.url||'';
+    if(!it.title||!link) return null;
+    return mk(src,i,(it.title||'').trim(),link,desc,img,it.published||it.updated||'');
+  }).filter(Boolean);
+}
+
+function parseXmlStr(xmlStr,src){
+  try{
+    const doc=new DOMParser().parseFromString(xmlStr,'application/xml');
+    return Array.from(doc.querySelectorAll('item')).slice(0,10).map((el,i)=>{
+      const title=el.querySelector('title')?.textContent?.trim()||'';
+      const link=el.querySelector('link')?.textContent?.trim()||'';
+      const desc=el.querySelector('description')?.textContent?.trim()||'';
+      const pub=el.querySelector('pubDate')?.textContent||'';
+      let img=el.querySelector('[url]')?.getAttribute('url')||'';
+      if(!img){const e=el.querySelector('enclosure');if(e?.getAttribute('type')?.startsWith('image'))img=e.getAttribute('url')||'';}
+      if(!img) img=extractImg(desc);
+      if(!title||!link) return null;
+      return mk(src,i,title,link,strip(desc).substring(0,300),img,pub);
+    }).filter(Boolean);
+  }catch(e){return[];}
+}
+
+function mk(src,i,title,link,desc,img,pubDate){
+  return{
+    id:`${src.id}_${i}`,
+    title,titleAr:src.lang==='ar'?title:null,
+    link,
+    description:desc,descriptionAr:src.lang==='ar'?desc:null,
+    image:img,pubDate,
+    source:src.id,sourceName:src.name,sourceColor:src.color,
+    cat:src.cat,lang:src.lang,translated:false,
   };
+}
 
-  // ==============================
-  // TOGGLE ADD FORM
-  // ==============================
-  function toggleAddForm(forceOpen = null) {
-    const formCard = document.getElementById('addFormCard');
-    const btn = document.getElementById('toggleFormBtn');
+function extractImg(html){const m=html.match(/<img[^>]+src=["']([^"']+)["']/i);return m?m[1]:'';}
+function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||d.innerText||'';}
 
-    const isHidden = formCard.style.display === 'none';
-
-    let shouldOpen;
-    if (forceOpen === null) {
-      shouldOpen = isHidden;
-    } else {
-      shouldOpen = forceOpen;
+// ============================================================
+//  TRANSLATION (MyMemory free API)
+// ============================================================
+const trCache={};
+async function trText(text){
+  if(!text||text.length<4) return text;
+  const k=text.substring(0,80);
+  if(trCache[k]) return trCache[k];
+  const chunk=text.substring(0,480);
+  try{
+    const u=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|ar`;
+    const r=await fetch(u,{signal:AbortSignal.timeout(8000)});
+    const d=await r.json();
+    if(d.responseStatus===200&&d.responseData?.translatedText){
+      const t=d.responseData.translatedText;
+      if(!t.includes('MYMEMORY')&&t.length>3){trCache[k]=t;return t;}
     }
+  }catch(e){}
+  return text;
+}
 
-    if (shouldOpen) {
-      formCard.style.display = 'block';
-      btn.innerHTML = '➖ إغلاق نموذج الإضافة';
-      formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      formCard.style.display = 'none';
-      btn.innerHTML = '➕ إضافة سيارة جديدة';
-    }
-  }
+async function trItem(item){
+  if(item.lang==='ar'||item.translated) return;
+  try{
+    const[ta,da]=await Promise.all([trText(item.title),item.description?trText(item.description.substring(0,260)):Promise.resolve('')]);
+    item.titleAr=ta||item.title;
+    item.descriptionAr=da||item.description;
+    item.translated=true;
+    trCount++;
+    document.getElementById('sTr').textContent=trCount;
+    liveUpdateCard(item);
+  }catch(e){}
+}
 
-  // ==============================
-  // PLATE PREVIEW
-  // ==============================
-  function updatePlatePreview() {
-    const l1 = document.getElementById('letter1').value;
-    const l2 = document.getElementById('letter2').value;
-    const l3 = document.getElementById('letter3').value;
-    const num = document.getElementById('plateNumber').value;
+function liveUpdateCard(item){
+  const c=document.getElementById('c_'+item.id);
+  if(!c) return;
+  const te=c.querySelector('.ctitle');const de=c.querySelector('.cdesc');const b=c.querySelector('.tr-tag');
+  if(te&&item.titleAr) te.textContent=item.titleAr;
+  if(de&&item.descriptionAr) de.textContent=item.descriptionAr;
+  if(b) b.style.display='block';
+}
 
-    const letters = [l1 || '-', l2 || '-', l3 || '-'].join(' ');
-    const numbers = num || '----';
+// ============================================================
+//  TIME
+// ============================================================
+function ago(s){
+  if(!s) return'منذ قليل';
+  const d=new Date(s);if(isNaN(d)) return'منذ قليل';
+  const m=Math.floor((Date.now()-d)/60000);
+  if(m<1) return'الآن';if(m<60) return`منذ ${m} دق`;
+  const h=Math.floor(m/60);if(h<24) return`منذ ${h} س`;
+  const dy=Math.floor(h/24);if(dy<7) return`منذ ${dy} يوم`;
+  return d.toLocaleDateString('ar-SA');
+}
+function e(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-    document.getElementById('prevLetters').textContent = letters;
-    document.getElementById('prevNumbers').textContent = numbers;
-  }
+// ============================================================
+//  RENDER
+// ============================================================
+function cardHTML(item){
+  const title=item.titleAr||item.title;
+  const desc=item.descriptionAr||item.description;
+  const imgH=item.image
+    ?`<img src="${e(item.image)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'no-img\\'><i class=\\'fas fa-newspaper\\'></i></div>'" />`
+    :`<div class="no-img"><i class="fas fa-newspaper"></i></div>`;
+  return`
+  <a class="card" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}" data-tr="${item.translated?1:0}">
+    <div class="cimg">
+      ${imgH}
+      <div class="src-tag" style="background:${item.sourceColor}">${e(item.sourceName)}</div>
+      ${item.lang==='en'?`<div class="tr-tag" style="${item.translated?'':'display:none'}"><i class="fas fa-language"></i> مترجم</div>`:''}
+    </div>
+    <div class="cbody">
+      <div class="ctitle">${e(title)}</div>
+      ${desc?`<div class="cdesc">${e(desc)}</div>`:''}
+      <div class="cfoot"><span class="csrc">${e(item.sourceName)}</span><span class="ctime"><i class="fas fa-clock"></i>${ago(item.pubDate)}</span></div>
+    </div>
+  </a>`;
+}
 
-  function updateEditPreview() {
-    const l1 = document.getElementById('editL1').value;
-    const l2 = document.getElementById('editL2').value;
-    const l3 = document.getElementById('editL3').value;
-    const num = document.getElementById('editNum').value;
+function featMainHTML(item){
+  const title=item.titleAr||item.title;
+  const img=item.image||'';
+  return`<a class="feat-main" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}">
+    ${img?`<img src="${e(img)}" alt="" onerror="this.style.display='none'" />`:''}
+    <div class="feat-overlay">
+      <div class="feat-src" style="background:${item.sourceColor}">${e(item.sourceName)}</div>
+      <h2>${e(title)}</h2>
+      <div class="feat-meta"><span><i class="fas fa-clock"></i>${ago(item.pubDate)}</span><span>•</span><span><i class="fas fa-mouse-pointer"></i>اضغط للقراءة</span></div>
+    </div>
+  </a>`;
+}
 
-    const letters = [l1 || '-', l2 || '-', l3 || '-'].join(' ');
-    const numbers = num || '----';
+function sideCardHTML(item){
+  const title=item.titleAr||item.title;
+  const img=item.image||'';
+  return`<a class="side-card" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}">
+    <div class="sc-img">${img?`<img src="${e(img)}" alt="" loading="lazy" onerror="this.style.display='none'" />`:''}  </div>
+    <div class="sc-body">
+      <div class="sc-title">${e(title)}</div>
+      <div class="sc-foot"><span class="sc-src" style="color:${item.sourceColor}">${e(item.sourceName)}</span><span class="sc-time">${ago(item.pubDate)}</span></div>
+    </div>
+  </a>`;
+}
 
-    document.getElementById('editPrevLetters').textContent = letters;
-    document.getElementById('editPrevNumbers').textContent = numbers;
-  }
-
-  // ==============================
-  // FORM SUBMIT
-  // ==============================
-  function submitForm() {
-    const name  = document.getElementById('ownerName').value.trim();
-    const l1    = document.getElementById('letter1').value;
-    const l2    = document.getElementById('letter2').value;
-    const l3    = document.getElementById('letter3').value;
-    const num   = document.getElementById('plateNumber').value.trim();
-    const type  = document.getElementById('carType').value;
-    const model = document.getElementById('carModel').value.trim();
-    const color = document.getElementById('carColor').value;
-
-    if (!name)  { showToast('⚠️ يرجى إدخال اسم صاحب السيارة', 'error'); return; }
-    if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة للوحة', 'error'); return; }
-    if (!num || num.length < 1 || num.length > 4) { showToast('⚠️ يرجى إدخال رقم اللوحة (١-٤ أرقام)', 'error'); return; }
-
-    const record = {
-      name, letters: [l1, l2, l3], number: num,
-      type, model, color,
-      date: new Date().toLocaleDateString('ar-SA'),
-      timestamp: Date.now()
-    };
-
-    if (editMode) {
-      cars[editIndex] = record;
-      showToast('✅ تم تعديل البيانات بنجاح', 'success');
-      editMode = false;
-      editIndex = -1;
-      document.getElementById('formTitle').textContent = 'إضافة سيارة جديدة';
-      document.getElementById('formSubtitle').textContent = 'أدخل بيانات السيارة أدناه';
-      document.getElementById('submitIcon').textContent = '💾';
-      document.getElementById('submitText').textContent = 'حفظ السيارة';
-      document.querySelector('.form-card-header .icon-badge').textContent = '➕';
-    } else {
-      cars.push(record);
-      showToast('✅ تمت إضافة السيارة بنجاح', 'success');
-    }
-
-    saveCars();
-    resetForm();
-    renderTable();
-    updateStats();
-    toggleAddForm(false);
-  }
-
-  function resetForm() {
-    document.getElementById('ownerName').value = '';
-    document.getElementById('letter1').value = '';
-    document.getElementById('letter2').value = '';
-    document.getElementById('letter3').value = '';
-    document.getElementById('plateNumber').value = '';
-    document.getElementById('carType').value = '';
-    document.getElementById('carModel').value = '';
-    document.getElementById('carColor').value = '';
-    updatePlatePreview();
-
-    if (editMode) {
-      editMode = false;
-      editIndex = -1;
-      document.getElementById('formTitle').textContent = 'إضافة سيارة جديدة';
-      document.getElementById('formSubtitle').textContent = 'أدخل بيانات السيارة أدناه';
-      document.getElementById('submitIcon').textContent = '💾';
-      document.getElementById('submitText').textContent = 'حفظ السيارة';
-      document.querySelector('.form-card-header .icon-badge').textContent = '➕';
-    }
-  }
-
-  // ==============================
-  // RENDER TABLE
-  // ==============================
-  function renderTable() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const tbody = document.getElementById('tableBody');
-    const empty = document.getElementById('emptyState');
-
-    const filtered = cars.filter(c => {
-      const plate = c.letters.join('') + c.number;
-      return (
-        c.name.toLowerCase().includes(query) ||
-        plate.includes(query) ||
-        (c.type || '').toLowerCase().includes(query) ||
-        (c.color || '').toLowerCase().includes(query)
-      );
-    });
-
-    document.getElementById('tableCount').textContent = filtered.length;
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '';
-      empty.style.display = 'block';
-    } else {
-      empty.style.display = 'none';
-      tbody.innerHTML = filtered.map((c, i) => {
-        const realIdx = cars.indexOf(c);
-        const clr = colorMap[c.color] || '#888';
-        const initial = c.name.charAt(0);
-
-        const colorHtml = c.color
-          ? `
-            <div class="color-dot-wrapper">
-              <span class="color-dot" style="background:${clr}"></span>
-              <span>${c.color}</span>
-            </div>
-          `
-          : '<span style="color:#94a3b8">—</span>';
-
-        return `
-          <tr>
-            <td class="row-num">${i + 1}</td>
-            <td>
-              <div class="name-badge">
-                <div class="avatar">${initial}</div>
-                <span>${c.name}</span>
-              </div>
-            </td>
-            <td>
-              <span class="plate-cell">
-                <span dir="rtl">${c.letters.join(' ')}</span>
-                <span class="plate-cell-sep"></span>
-                <span dir="ltr">${c.number}</span>
-              </span>
-            </td>
-            <td>${c.type || '<span style="color:#94a3b8">—</span>'}</td>
-            <td>${c.model || '<span style="color:#94a3b8">—</span>'}</td>
-            <td>${colorHtml}</td>
-            <td>
-              <div class="action-btns">
-                <button class="btn-icon btn-edit" onclick="openEdit(${realIdx})" title="تعديل">✏️</button>
-                <button class="btn-icon btn-del" onclick="openDelete(${realIdx})" title="حذف">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-  }
-
-  function isColorDark(hex) {
-    const r = parseInt(hex.slice(1,3), 16);
-    const g = parseInt(hex.slice(3,5), 16);
-    const b = parseInt(hex.slice(5,7), 16);
-    return (r * 299 + g * 587 + b * 114) / 1000 < 128;
-  }
-
-  // ==============================
-  // EDIT
-  // ==============================
-  function openEdit(idx) {
-    editIndex = idx;
-    const c = cars[idx];
-
-    document.getElementById('editName').value  = c.name;
-    document.getElementById('editL1').value    = c.letters[0] || '';
-    document.getElementById('editL2').value    = c.letters[1] || '';
-    document.getElementById('editL3').value    = c.letters[2] || '';
-    document.getElementById('editNum').value   = c.number;
-    document.getElementById('editType').value  = c.type || '';
-    document.getElementById('editModel').value = c.model || '';
-    document.getElementById('editColor').value = c.color || '';
-
-    updateEditPreview();
-    document.getElementById('editModal').classList.add('active');
-  }
-
-  function closeEditModal() {
-    document.getElementById('editModal').classList.remove('active');
-  }
-
-  function saveEdit() {
-    const name  = document.getElementById('editName').value.trim();
-    const l1    = document.getElementById('editL1').value;
-    const l2    = document.getElementById('editL2').value;
-    const l3    = document.getElementById('editL3').value;
-    const num   = document.getElementById('editNum').value.trim();
-    const type  = document.getElementById('editType').value;
-    const model = document.getElementById('editModel').value.trim();
-    const color = document.getElementById('editColor').value;
-
-    if (!name)  { showToast('⚠️ يرجى إدخال الاسم', 'error'); return; }
-    if (!l1 || !l2 || !l3) { showToast('⚠️ يرجى اختيار الحروف الثلاثة', 'error'); return; }
-    if (!num)   { showToast('⚠️ يرجى إدخال رقم اللوحة', 'error'); return; }
-
-    cars[editIndex] = {
-      ...cars[editIndex],
-      name, letters: [l1, l2, l3], number: num,
-      type, model, color
-    };
-
-    saveCars();
-    renderTable();
-    updateStats();
-    closeEditModal();
-    showToast('✅ تم تعديل البيانات بنجاح', 'success');
-  }
-
-  // ==============================
-  // DELETE
-  // ==============================
-  function openDelete(idx) {
-    deleteIndex = idx;
-    document.getElementById('deleteModal').classList.add('active');
-  }
-
-  function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('active');
-  }
-
-  function confirmDelete() {
-    cars.splice(deleteIndex, 1);
-    saveCars();
-    renderTable();
-    updateStats();
-    closeDeleteModal();
-    showToast('🗑️ تم حذف السيارة بنجاح', 'info');
-  }
-
-  // ==============================
-  // STATS
-  // ==============================
-  function updateStats() {
-    document.getElementById('totalCount').textContent = cars.length;
-
-    const today = new Date().toLocaleDateString('ar-SA');
-    const todayCount = cars.filter(c => c.date === today).length;
-    document.getElementById('todayCount').textContent = todayCount;
-
-    const uniqueColors = new Set(cars.map(c => c.color).filter(Boolean));
-    document.getElementById('colorCount').textContent = uniqueColors.size;
-
-    const uniqueTypes = new Set(cars.map(c => c.type).filter(Boolean));
-    document.getElementById('typeCount').textContent = uniqueTypes.size;
-  }
-
-  // ==============================
-  // SAVE
-  // ==============================
-  function saveCars() {
-    localStorage.setItem('saudiCarPlates', JSON.stringify(cars));
-  }
-
-  // ==============================
-  // TOAST
-  // ==============================
-  function showToast(msg, type = 'info') {
-    const tc = document.getElementById('toastContainer');
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerHTML = msg;
-    tc.appendChild(t);
-    setTimeout(() => {
-      t.style.opacity = '0';
-      t.style.transition = 'opacity 0.4s';
-      setTimeout(() => tc.removeChild(t), 400);
-    }, 3000);
-  }
-
-  // Close modals on outside click
-  document.getElementById('editModal').addEventListener('click', function(e) {
-    if (e.target === this) closeEditModal();
-  });
-  document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) closeDeleteModal();
+function renderGrids(){
+  const qv=searchQuery.toLowerCase();
+  const filtered=allNews.filter(it=>{
+    const t=(it.titleAr||it.title||'').toLowerCase();
+    if(qv&&!t.includes(qv)) return false;
+    if(curSrc&&it.source!==curSrc) return false;
+    if(curFilt==='arabic'&&it.cat!=='arabic') return false;
+    if(curFilt==='intl'&&it.cat!=='intl') return false;
+    if(curFilt==='tr'&&!it.translated) return false;
+    return true;
   });
 
-  // ==============================
-  // INIT
-  // ==============================
-  renderTable();
-  updateStats();
-  updatePlatePreview();
+  const arab=filtered.filter(i=>i.cat==='arabic');
+  const intl=filtered.filter(i=>i.cat==='intl');
+
+  document.getElementById('arCnt').textContent=arab.length;
+  document.getElementById('intlCnt').textContent=intl.length;
+
+  fillGrid('arGrid',arab);
+  fillGrid('intlGrid',intl);
+
+  const showF=curFilt==='all'&&!curSrc&&!searchQuery;
+  document.getElementById('featSec').style.display=showF?'':'none';
+  if(showF&&filtered.length) renderFeat(filtered.slice(0,5));
+}
+
+function fillGrid(id,items){
+  const g=document.getElementById(id);
+  if(!items.length){g.innerHTML='<div class="empty"><i class="fas fa-newspaper"></i><p>لا توجد أخبار مطابقة</p></div>';return;}
+  g.innerHTML=items.map(cardHTML).join('');
+  g.querySelectorAll('a[data-src]').forEach(a=>{
+    const id=a.id.replace('c_','');
+    const item=allNews.find(n=>n.id===id);
+    if(item) a.addEventListener('click',ev=>{ev.preventDefault();showModal(item);});
+  });
+}
+
+function renderFeat(items){
+  const g=document.getElementById('featGrid');
+  if(!items.length) return;
+  let html=featMainHTML(items[0]);
+  const sides=items.slice(1,4).map(sideCardHTML).join('');
+  html+=`<div class="feat-side">${sides}</div>`;
+  g.innerHTML=html;
+  g.querySelectorAll('a[data-src]').forEach(a=>{
+    const id=a.id.replace('c_','');
+    const item=allNews.find(n=>n.id===id);
+    if(item) a.addEventListener('click',ev=>{ev.preventDefault();showModal(item);});
+  });
+}
+
+function buildTicker(items){
+  const ti=document.getElementById('tickerInner');
+  const sl=items.slice(0,30);
+  const html=sl.map(i=>`<span>${e(i.titleAr||i.title)}</span><span class="ticker-dot">●</span>`).join('');
+  ti.innerHTML=html+html;
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+function showModal(item){
+  const title=item.titleAr||item.title;
+  const desc=item.descriptionAr||item.description||'اضغط على زر القراءة للاطلاع على الخبر كاملاً من المصدر الأصلي.';
+  document.getElementById('mTitle').textContent=title;
+  document.getElementById('mDesc').textContent=desc;
+  document.getElementById('mLink').href=item.link;
+  document.getElementById('mSrc').innerHTML=
+    `<span style="display:inline-block;background:${item.sourceColor};color:#fff;font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:4px;margin-bottom:9px">${e(item.sourceName)}</span>`;
+  const mi=document.getElementById('mImg');
+  if(item.image){mi.src=item.image;mi.style.display='block';mi.onerror=()=>mi.style.display='none';}
+  else mi.style.display='none';
+  document.getElementById('ov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function ovClick(ev){if(ev.target===document.getElementById('ov'))closeModal();}
+function closeModal(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
+
+// ============================================================
+//  FILTERS
+// ============================================================
+let curFilt='all',curSrc=null,searchQuery='';
+function setFilter(f,btn){
+  curFilt=f;curSrc=null;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderGrids();
+}
+function setSrc(sid,btn){
+  if(curSrc===sid){
+    curSrc=null;
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+    document.querySelector('.fbtn').classList.add('on');
+    curFilt='all';
+  }else{
+    curSrc=sid;
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+  }
+  renderGrids();
+}
+function doFilter(){searchQuery=document.getElementById('q').value.trim();renderGrids();}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function toast(msg,icon='fa-spinner fa-spin'){
+  document.getElementById('toastTxt').textContent=msg;
+  document.querySelector('#toast i').className='fas '+icon;
+  document.getElementById('toast').classList.add('up');
+}
+function hideToast(){document.getElementById('toast').classList.remove('up');}
+
+// ============================================================
+//  MAIN FETCH
+// ============================================================
+let allNews=[],trCount=0,busy=false;
+
+async function loadSource(src){
+  for(const feedUrl of src.feeds){
+    try{
+      const res=await fetchFeed(feedUrl);
+      let items=[];
+      if(res.type==='rss2json') items=parseRss2json(res.data,src);
+      else if(res.type==='feedparser') items=parseFeedparser(res.data,src);
+      else items=parseXmlStr(res.data,src);
+      if(items.length>0) return items;
+    }catch(e){}
+  }
+  // Return fallback placeholder for this source
+  return getFallback(src);
+}
+
+function getFallback(src){
+  const now=new Date().toISOString();
+  const fallbacks={
+    aljazeera:[
+      {t:'أخبار الجزيرة نت - تصفح المصدر مباشرةً',l:'https://www.aljazeera.net',d:'اضغط لزيارة موقع الجزيرة نت والاطلاع على آخر الأخبار العربية والعالمية',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Al_Jazeera_English_Logo.svg/320px-Al_Jazeera_English_Logo.svg.png'},
+      {t:'تابع آخر المستجدات والتحليلات السياسية',l:'https://www.aljazeera.net/news',d:'أخبار عاجلة وتغطيات مستمرة من الجزيرة نت',img:''},
+    ],
+    skynews:[
+      {t:'سكاي نيوز عربية - الأخبار العاجلة',l:'https://www.skynewsarabia.com',d:'تابع آخر الأخبار من سكاي نيوز عربية',img:''},
+    ],
+    bbc:[
+      {t:'BBC عربي - أخبار العالم والمنطقة',l:'https://www.bbc.com/arabic',d:'اقرأ آخر الأخبار من BBC عربي',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/BBC_World_Service_2022_%28Boxed%29.svg/320px-BBC_World_Service_2022_%28Boxed%29.svg.png'},
+    ],
+    cnn:[
+      {t:'CNN بالعربية - آخر الأخبار',l:'https://arabic.cnn.com',d:'تابع الأخبار الدولية والعربية من CNN بالعربية',img:''},
+    ],
+    alarabiya:[
+      {t:'العربية نت - الأخبار العاجلة',l:'https://www.alarabiya.net',d:'أخبار عربية ودولية من قناة العربية',img:''},
+    ],
+    rt:[
+      {t:'روسيا اليوم - أخبار عالمية',l:'https://arabic.rt.com',d:'تغطية شاملة للأحداث الدولية من RT بالعربية',img:''},
+    ],
+    france24:[
+      {t:'فرانس 24 عربي - أحدث الأخبار',l:'https://www.france24.com/ar',d:'تابع آخر الأخبار والتقارير من فرانس 24',img:''},
+    ],
+    reuters:[
+      {t:'Reuters - Top World News',l:'https://www.reuters.com',d:'Breaking news and top stories from Reuters news agency',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Reuters_Logo.svg/320px-Reuters_Logo.svg.png'},
+    ],
+    apnews:[
+      {t:'AP News - Breaking International News',l:'https://apnews.com',d:'Latest world news from the Associated Press',img:''},
+    ],
+    nytimes:[
+      {t:'New York Times - World News',l:'https://www.nytimes.com/section/world',d:'International coverage from The New York Times',img:''},
+    ],
+    wsj:[
+      {t:'Wall Street Journal - World & Business',l:'https://www.wsj.com/news/world',d:'Global finance and business news from WSJ',img:''},
+    ],
+    guardian:[
+      {t:'The Guardian - World News',l:'https://www.theguardian.com/world',d:'Independent journalism from The Guardian',img:''},
+    ],
+    bloomberg:[
+      {t:'Bloomberg - Markets & Politics',l:'https://www.bloomberg.com',d:'Financial and political news from Bloomberg',img:''},
+    ],
+  };
+  const fb=fallbacks[src.id]||[{t:`أخبار ${src.name}`,l:src.site,d:`تصفح المصدر مباشرةً للاطلاع على آخر الأخبار`,img:''}];
+  return fb.map((f,i)=>mk(src,`fb${i}`,f.t,f.l,f.d,f.img,new Date(Date.now()-i*3600000).toISOString()));
+}
+
+async function loadAll(){
+  if(busy) return;
+  busy=true;
+  allNews=[];trCount=0;
+  document.getElementById('sTr').textContent='0';
+  document.getElementById('sCount').textContent='جاري التحميل...';
+  document.getElementById('sTime').textContent='—';
+  document.getElementById('rfBtn').classList.add('spin');
+  toast('جاري تحميل الأخبار من 14 مصدر عالمي...');
+
+  // Load all concurrently
+  const results=await Promise.allSettled(SRCS.map(s=>loadSource(s)));
+  results.forEach(r=>{if(r.status==='fulfilled')allNews.push(...r.value);});
+
+  // Sort newest first
+  allNews.sort((a,b)=>new Date(b.pubDate||0)-new Date(a.pubDate||0));
+  document.getElementById('sCount').textContent=allNews.length||'0';
+  const now=new Date();
+  document.getElementById('sTime').textContent=now.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});
+
+  renderGrids();
+  buildTicker(allNews);
+  document.getElementById('rfBtn').classList.remove('spin');
+
+  // Translate English items in background
+  const enItems=allNews.filter(i=>i.lang==='en');
+  if(enItems.length){
+    toast(`جاري ترجمة ${enItems.length} خبر إنجليزي تلقائياً...`,'fa-language');
+    for(let i=0;i<enItems.length;i+=3){
+      await Promise.allSettled([
+        trItem(enItems[i]),
+        enItems[i+1]?trItem(enItems[i+1]):null,
+        enItems[i+2]?trItem(enItems[i+2]):null,
+      ].filter(Boolean));
+      await new Promise(r=>setTimeout(r,350));
+      if(i%12===0) renderGrids();
+    }
+    renderGrids();
+    buildTicker(allNews);
+  }
+
+  hideToast();
+  busy=false;
+
+  // Auto-refresh every 8 minutes
+  setTimeout(refreshAll,8*60*1000);
+}
+
+function refreshAll(){
+  if(busy) return;
+  allNews=[];renderGrids();loadAll();
+}
+
+document.addEventListener('DOMContentLoaded',loadAll);
 </script>
 </body>
 </html>

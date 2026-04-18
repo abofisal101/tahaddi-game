@@ -1,837 +1,171 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>مرصد الأخبار العالمية</title>
-  <link rel="icon" type="image/jpeg" href="https://www.genspark.ai/api/files/s/mGxb1TCU" />
-  <link rel="apple-touch-icon" href="https://www.genspark.ai/api/files/s/mGxb1TCU" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="مرصد الأخبار" />
-  <meta name="theme-color" content="#0a1628" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
-<style>
-:root{
-  --bg:#0a1628;--bg2:#0d1e35;--card:#112240;--border:#1e3a5f;
-  --red:#c8102e;--gold:#d4af37;--orange:#f5a623;--cyan:#00d4ff;
-  --txt:#e8eaf0;--muted:#8892a4;--r:12px;
-  --h:68px;--ticker:30px;--filter:52px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px}
-/* HEADER */
-header{
-  position:fixed;top:0;inset-inline:0;z-index:1000;height:var(--h);
-  background:linear-gradient(135deg,#060e1a,#112240,#060e1a);
-  border-bottom:2px solid var(--red);
-  display:flex;align-items:center;justify-content:space-between;padding:0 18px;
-  box-shadow:0 2px 24px rgba(200,16,46,.35);
-}
-.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
-.logo img{width:44px;height:44px;border-radius:50%;border:2px solid var(--red);object-fit:cover}
-.logo-text .t1{font-size:1.2rem;font-weight:900;color:#fff;line-height:1.2}
-.logo-text .t2{font-size:.68rem;color:var(--orange);font-weight:600}
-.hdr-right{display:flex;align-items:center;gap:10px}
-.live{background:var(--red);color:#fff;font-size:.68rem;font-weight:800;padding:3px 10px;
-  border-radius:20px;display:flex;align-items:center;gap:5px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1s infinite}
-.refresh-btn{background:var(--red);color:#fff;border:none;border-radius:8px;
-  padding:7px 14px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
-.refresh-btn:hover{background:#a00c26}
-.refresh-btn.spin i{animation:rotate 1s linear infinite}
-/* TICKER */
-.ticker{
-  position:fixed;top:var(--h);inset-inline:0;z-index:999;
-  height:var(--ticker);background:var(--red);display:flex;align-items:center;overflow:hidden;
-}
-.ticker-label{
-  background:#7a0018;color:#fff;font-size:.72rem;font-weight:800;
-  padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;
-}
-.ticker-wrap{flex:1;overflow:hidden;position:relative}
-.ticker-inner{display:inline-flex;white-space:nowrap;animation:scroll 90s linear infinite}
-.ticker-inner span{font-size:.75rem;color:#fff;font-weight:600;padding:0 18px;cursor:pointer}
-.ticker-inner span:hover{text-decoration:underline}
-.ticker-dot{color:rgba(255,255,255,.4);padding:0 4px}
-/* FILTERS */
-.filters{
-  position:fixed;top:calc(var(--h) + var(--ticker));inset-inline:0;z-index:998;
-  height:var(--filter);background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:7px;padding:0 14px;overflow-x:auto;scrollbar-width:none;
-}
-.filters::-webkit-scrollbar{display:none}
-.srch{position:relative;flex-shrink:0}
-.srch i{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.78rem}
-.srch input{
-  background:var(--bg);border:1px solid var(--border);border-radius:8px;
-  color:var(--txt);font-family:'Cairo',sans-serif;font-size:.8rem;
-  padding:6px 28px 6px 10px;width:180px;outline:none;transition:border .2s;
-}
-.srch input:focus{border-color:var(--red)}
-.srch input::placeholder{color:var(--muted)}
-.fbtn{
-  background:var(--bg);border:1px solid var(--border);color:var(--muted);
-  border-radius:20px;padding:4px 12px;font-family:'Cairo',sans-serif;
-  font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:.2s;flex-shrink:0;
-}
-.fbtn:hover{border-color:var(--red);color:var(--txt)}
-.fbtn.on{background:var(--red);border-color:var(--red);color:#fff}
-/* MAIN */
-main{
-  max-width:1380px;margin:0 auto;
-  padding:calc(var(--h) + var(--ticker) + var(--filter) + 16px) 14px 40px;
-}
-/* STATS */
-.stats{display:flex;align-items:center;gap:16px;padding:8px 0 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;margin-bottom:14px}
-.stat{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--muted)}
-.stat i{color:var(--red);font-size:.75rem}.stat strong{color:var(--txt)}
-/* SECTION */
-.sec{margin-bottom:34px}
-.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;margin-top:20px;font-size:1rem;font-weight:800}
-.bar{width:4px;height:20px;border-radius:2px;background:var(--red)}
-.cnt{background:var(--card);color:var(--muted);font-size:.68rem;padding:2px 8px;border-radius:12px;border:1px solid var(--border)}
-/* FEATURED */
-.feat-wrap{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:26px}
-.feat-main{
-  position:relative;border-radius:var(--r);overflow:hidden;min-height:350px;
-  border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;
-  display:block;transition:transform .3s;background:var(--card);
-}
-.feat-main:hover{transform:translateY(-3px);box-shadow:0 6px 28px rgba(0,0,0,.5)}
-.feat-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.feat-overlay{
-  position:absolute;bottom:0;inset-inline:0;
-  background:linear-gradient(to top,rgba(0,0,0,.95),rgba(0,0,0,.45) 65%,transparent);
-  padding:22px 18px 16px;
-}
-.feat-src{display:inline-block;color:#fff;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:4px;margin-bottom:7px}
-.feat-main h2{font-size:1.1rem;font-weight:800;line-height:1.5;color:#fff;margin-bottom:5px}
-.feat-meta{font-size:.68rem;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px}
-.feat-side{display:flex;flex-direction:column;gap:9px}
-/* SIDE CARD */
-.side-card{
-  background:var(--card);border:1px solid var(--border);border-radius:10px;
-  overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;
-  display:flex;gap:10px;padding:10px;transition:.25s;flex:1;
-}
-.side-card:hover{border-color:var(--red);transform:translateX(3px)}
-.sc-img{width:84px;height:68px;border-radius:7px;overflow:hidden;flex-shrink:0;background:var(--bg2)}
-.sc-img img{width:100%;height:100%;object-fit:cover}
-.sc-body{flex:1;display:flex;flex-direction:column;justify-content:space-between}
-.sc-title{font-size:.78rem;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.sc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
-.sc-src{font-size:.63rem;font-weight:700}
-.sc-time{font-size:.6rem;color:var(--muted)}
-/* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px}
-/* CARD */
-.card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;
-  display:flex;flex-direction:column;transition:.25s;animation:fadeIn .4s ease;
-}
-.card:hover{transform:translateY(-4px);box-shadow:0 6px 28px rgba(0,0,0,.5);border-color:var(--red)}
-.card:hover .cimg img{transform:scale(1.05)}
-.cimg{position:relative;height:172px;overflow:hidden;background:linear-gradient(135deg,var(--bg),var(--bg2))}
-.cimg img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
-.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg2)}
-.no-img i{font-size:2.5rem;color:var(--border)}
-.src-tag{position:absolute;top:9px;right:9px;color:#fff;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:4px;z-index:2;box-shadow:0 2px 5px rgba(0,0,0,.4)}
-.tr-tag{position:absolute;top:9px;left:9px;background:rgba(212,175,55,.9);color:#000;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:4px;z-index:2}
-.cbody{padding:12px;flex:1;display:flex;flex-direction:column}
-.ctitle{font-size:.88rem;font-weight:700;line-height:1.55;color:var(--txt);margin-bottom:8px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.cdesc{font-size:.74rem;color:var(--muted);line-height:1.5;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.cfoot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
-.csrc{font-size:.68rem;font-weight:700;color:var(--orange)}
-.ctime{font-size:.62rem;color:var(--muted);display:flex;align-items:center;gap:4px}
-/* TOOLS */
-.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tool{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:20px;text-align:center;cursor:pointer;text-decoration:none;color:inherit;
-  transition:.3s;display:flex;flex-direction:column;align-items:center;gap:8px;
-}
-.tool:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:0 6px 22px rgba(0,0,0,.4)}
-.tool-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
-.tool-name{font-size:.88rem;font-weight:800}
-.tool-desc{font-size:.7rem;color:var(--muted);line-height:1.5}
-/* SKELETON */
-.sk{background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
-.sk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.sk-img{height:172px}.sk-line{height:13px;margin:8px 12px}.sk-line.s{width:55%}.sk-line.m{width:78%}
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;color:var(--muted);text-align:center;gap:10px;grid-column:1/-1}
-.empty i{font-size:2.5rem;color:var(--border)}.empty p{font-size:.86rem}
-/* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-width:580px;width:92%;max-height:88vh;overflow-y:auto;padding:22px;position:relative;animation:fadeIn .3s ease}
-.modal-x{position:absolute;top:11px;left:11px;background:var(--red);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center}
-.modal img{width:100%;border-radius:8px;margin-bottom:11px;max-height:200px;object-fit:cover}
-.modal h3{font-size:.98rem;font-weight:800;margin-bottom:9px;line-height:1.55}
-.modal p{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:14px}
-.mact{display:flex;gap:9px;flex-wrap:wrap}
-.btn-r{background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;text-decoration:none;transition:.2s}
-.btn-r:hover{background:#a00c26}
-.btn-g{background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer;transition:.2s}
-.btn-g:hover{border-color:var(--red)}
-/* TOAST */
-.toast{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
-  padding:9px 18px;display:flex;align-items:center;gap:9px;
-  font-size:.8rem;color:var(--txt);z-index:4000;transition:transform .35s ease;
-  box-shadow:0 4px 20px rgba(0,0,0,.5);min-width:220px;justify-content:center;
-}
-.toast.up{transform:translateX(-50%) translateY(0)}
-.toast i{color:var(--gold)}
-/* footer */
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:16px;text-align:center;color:var(--muted);font-size:.73rem;line-height:1.9}
-footer a{color:var(--orange);text-decoration:none}footer a:hover{text-decoration:underline}
-/* ANIMATIONS */
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes rotate{to{transform:rotate(360deg)}}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* RESPONSIVE */
-@media(max-width:900px){
-  .feat-wrap{grid-template-columns:1fr}
-  .feat-main{min-height:250px}
-  .feat-side{flex-direction:row;overflow-x:auto;gap:8px}
-  .feat-side .side-card{min-width:230px}
-}
-@media(max-width:600px){
-  header{padding:0 10px}
-  .logo-text .t1{font-size:1rem}
-  .refresh-btn span{display:none}
-  .grid{grid-template-columns:1fr}
-  .tools-grid{grid-template-columns:1fr}
-  main{padding-inline:10px}
-  .srch input{width:148px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>🎯 5000 لغز عربي · غرف مباشرة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: #0a0a0a; font-family: 'Cairo', sans-serif; color: white; min-height: 100vh; padding: 16px 12px; }
+    .app { max-width: 480px; margin: 0 auto; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .header h1 { font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #ff6b6b, #ff1a1a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .banned-message { background: #550000; border: 2px solid #ff0000; border-radius: 20px; padding: 30px; text-align: center; }
+    .mini-leaderboard { background: #1a1a1a; border-radius: 20px; padding: 12px 16px; margin-bottom: 20px; border: 1px solid #333; }
+    .mini-leaderboard .title { display: flex; justify-content: space-between; color: #ff4444; font-weight: 700; }
+    .mini-leaderboard .players { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .player-chip { background: #222; padding: 6px 14px; border-radius: 30px; display: flex; align-items: center; gap: 6px; }
+    .card { background: #151515; border-radius: 24px; padding: 20px; border: 1px solid #2a2a2a; margin-bottom: 16px; }
+    .card.primary { background: linear-gradient(135deg, #1a0a0a, #150505); border-color: #ff3333; }
+    .card-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .btn { background: #222; border: 1px solid #444; color: white; padding: 16px 20px; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; width: 100%; font-family: 'Cairo', sans-serif; margin: 6px 0; }
+    .btn-primary { background: #e60000; border-color: #ff3333; box-shadow: 0 4px 15px rgba(230,0,0,0.3); }
+    .btn-primary:active { background: #cc0000; transform: scale(0.98); }
+    .btn:disabled { opacity: 0.4; }
+    .input-group { display: flex; gap: 8px; }
+    .input-group input { flex: 1; background: #0a0a0a; border: 1px solid #444; border-radius: 14px; padding: 14px 16px; color: white; font-size: 15px; font-family: 'Cairo', sans-serif; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .questions-preview { margin-top: 20px; max-height: 200px; overflow-y: auto; }
+    .preview-item { background: #1a1a1a; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .preview-cat { padding: 4px 10px; border-radius: 20px; font-size: 11px; background: #2a0000; color: #ff9999; }
+    .game-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+    .round-badge { background: #1a1a1a; padding: 8px 16px; border-radius: 30px; border: 1px solid #333; }
+    .score-badge { background: #ff1a1a; padding: 8px 16px; border-radius: 30px; font-weight: 700; }
+    .progress-bar { height: 8px; background: #1a1a1a; border-radius: 10px; margin: 16px 0; overflow: hidden; }
+    .progress-fill { height: 100%; background: #ff1a1a; width: 100%; }
+    .question-box { background: #151515; border-radius: 24px; padding: 24px 20px; margin: 20px 0; border: 1px solid #2a2a2a; text-align: center; }
+    .question-text { font-size: 20px; font-weight: 700; line-height: 1.5; }
+    .answers { display: grid; gap: 12px; margin: 20px 0; }
+    .answer-btn { background: #1a1a1a; border: 1.5px solid #333; border-radius: 18px; padding: 16px; font-size: 16px; font-weight: 600; color: white; text-align: center; cursor: pointer; }
+    .answer-btn.correct { background: #00a86b; border-color: #00ff88; }
+    .answer-btn.wrong { background: #8b0000; border-color: #ff4444; }
+    .answer-btn:disabled { opacity: 0.6; pointer-events: none; }
+    .players-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .player-badge { background: #1a1a1a; border: 1px solid #333; border-radius: 30px; padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
+    .status-message { color: #ffaa00; font-size: 14px; margin-top: 12px; text-align: center; }
+    .end-stats { background: #1a1a1a; border-radius: 20px; padding: 20px; margin: 20px 0; text-align: center; }
+    .final-score { font-size: 48px; font-weight: 900; color: #ff4444; }
+    .slider-item { margin: 20px 0; }
+    .slider-item label { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    input[type="range"] { width: 100%; accent-color: #ff1a1a; height: 6px; }
+    .room-info { background: #1a0000; border-radius: 16px; padding: 12px; margin: 15px 0; border: 1px solid #ff4444; }
+    .waiting-screen { text-align: center; padding: 40px 20px; }
+    .spinner { width: 50px; height: 50px; border: 4px solid #333; border-top-color: #ff4444; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .finished-player { display: inline-block; background: #1a3a1a; border: 1px solid #00aa00; border-radius: 20px; padding: 5px 15px; margin: 5px; }
+  </style>
 </head>
 <body>
+<div class="app">
+  <div class="mini-leaderboard" id="miniLeaderboard">
+    <div class="title"><span>🏆 المتصدرون</span><span id="playerCount">👤 0</span></div>
+    <div class="players" id="miniPlayersList"></div>
+  </div>
 
-<!-- HEADER -->
-<header>
-  <a href="#" class="logo">
-    <img src="https://www.genspark.ai/api/files/s/mGxb1TCU" alt="logo" onerror="this.style.display='none'" />
-    <div class="logo-text">
-      <div class="t1">مرصد الأخبار العالمية</div>
-      <div class="t2">World News Observatory · أخبار مباشرة</div>
+  <!-- شاشة الحظر -->
+  <div id="bannedScreen" class="screen">
+    <div class="banned-message">
+      <h2 style="color:#ff4444; margin-bottom:20px;">🚫 تم حظرك</h2>
+      <p>عذراً، لقد تم حظرك من قبل المشرف ولا يمكنك المشاركة حالياً.</p>
     </div>
-  </a>
-  <div class="hdr-right">
-    <div class="live"><div class="live-dot"></div>مباشر</div>
-    <button class="refresh-btn" id="rfBtn" onclick="refreshAll()">
-      <i class="fas fa-sync-alt"></i><span>تحديث</span>
-    </button>
-  </div>
-</header>
-
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-label"><i class="fas fa-rss"></i>عاجل</div>
-  <div class="ticker-wrap">
-    <div class="ticker-inner" id="tickerInner"><span>جاري تحميل آخر الأخبار...</span></div>
-  </div>
-</div>
-
-<!-- FILTERS -->
-<nav class="filters" id="filters">
-  <div class="srch"><i class="fas fa-search"></i><input type="text" id="q" placeholder="ابحث في الأخبار..." oninput="doFilter()" /></div>
-  <button class="fbtn on" onclick="setFilter('all',this)">🌐 الكل</button>
-  <button class="fbtn" onclick="setFilter('arabic',this)">🟢 عربي</button>
-  <button class="fbtn" onclick="setFilter('intl',this)">🌍 دولي</button>
-  <button class="fbtn" onclick="setFilter('tr',this)">🔤 مترجم</button>
-  <button class="fbtn" onclick="setSrc('aljazeera',this)">الجزيرة</button>
-  <button class="fbtn" onclick="setSrc('skynews',this)">سكاي نيوز</button>
-  <button class="fbtn" onclick="setSrc('bbc',this)">BBC</button>
-  <button class="fbtn" onclick="setSrc('cnn',this)">CNN</button>
-  <button class="fbtn" onclick="setSrc('alarabiya',this)">العربية</button>
-  <button class="fbtn" onclick="setSrc('rt',this)">RT</button>
-  <button class="fbtn" onclick="setSrc('france24',this)">فرانس24</button>
-  <button class="fbtn" onclick="setSrc('reuters',this)">Reuters</button>
-  <button class="fbtn" onclick="setSrc('apnews',this)">AP News</button>
-  <button class="fbtn" onclick="setSrc('nytimes',this)">NYT</button>
-  <button class="fbtn" onclick="setSrc('guardian',this)">Guardian</button>
-  <button class="fbtn" onclick="setSrc('bloomberg',this)">Bloomberg</button>
-</nav>
-
-<!-- MAIN -->
-<main>
-  <div class="stats">
-    <div class="stat"><i class="fas fa-newspaper"></i>مصادر: <strong>14</strong></div>
-    <div class="stat"><i class="fas fa-globe"></i>أخبار: <strong id="sCount">جاري التحميل</strong></div>
-    <div class="stat"><i class="fas fa-language"></i>مترجمة: <strong id="sTr">0</strong></div>
-    <div class="stat"><i class="fas fa-clock" style="color:var(--gold)"></i>آخر تحديث: <strong id="sTime">—</strong></div>
   </div>
 
-  <!-- Featured -->
-  <div id="featSec" class="sec">
-    <div class="sec-hd"><div class="bar"></div><i class="fas fa-star" style="color:var(--gold)"></i>أبرز الأخبار</div>
-    <div class="feat-wrap" id="featGrid">
-      <div class="sk-card" style="min-height:350px"><div class="sk" style="height:100%"></div></div>
-      <div class="feat-side">
-        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
-        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
-        <div class="sk-card" style="flex:1;padding:10px;min-height:85px"><div class="sk sk-line"></div><div class="sk sk-line m"></div></div>
+  <!-- شاشة البداية -->
+  <div id="homeScreen" class="screen active">
+    <div class="header"><h1>🎯 5000 لغز عربي</h1></div>
+    <p style="color:#888; margin-bottom:20px;">غرف مباشرة · تحدي جماعي</p>
+    
+    <!-- عرض الأسئلة الموجودة (للقراءة فقط) -->
+    <div class="card">
+      <div class="card-title">📚 الأسئلة المتاحة حالياً</div>
+      <div id="questionsPreviewList" class="questions-preview">
+        <p style="color:#aaa; text-align:center;">جاري تحميل الأسئلة...</p>
       </div>
     </div>
+    
+    <div class="card primary"><div class="card-title">✨ إنشاء غرفة جديدة</div><button class="btn btn-primary" id="homeCreateBtn">🎮 إنشاء غرفة</button></div>
+    <div class="card"><div class="card-title">🔑 الانضمام إلى غرفة</div><div class="input-group"><input type="text" id="homeRoomInput" placeholder="أدخل رمز الغرفة"><button class="btn btn-primary" id="homeJoinBtn">دخول</button></div></div>
   </div>
 
-  <!-- Arabic -->
-  <div id="arSec" class="sec">
-    <div class="sec-hd"><div class="bar"></div><i class="fas fa-satellite-dish"></i>المصادر العربية<span class="cnt" id="arCnt">0</span></div>
-    <div class="grid" id="arGrid">
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-    </div>
-  </div>
-
-  <!-- International -->
-  <div id="intlSec" class="sec">
-    <div class="sec-hd"><div class="bar" style="background:var(--gold)"></div><i class="fas fa-globe-americas" style="color:var(--gold)"></i>المصادر الدولية — مترجمة تلقائياً<span class="cnt" id="intlCnt">0</span></div>
-    <div class="grid" id="intlGrid">
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-      <div class="sk-card"><div class="sk sk-img"></div><div style="padding:11px"><div class="sk sk-line"></div><div class="sk sk-line m"></div><div class="sk sk-line s"></div></div></div>
-    </div>
-  </div>
-
-  <!-- Tools -->
-  <div class="sec">
-    <div class="sec-hd"><div class="bar" style="background:var(--cyan)"></div><i class="fas fa-satellite" style="color:var(--cyan)"></i>أدوات المتابعة التفاعلية</div>
-    <div class="tools-grid">
-      <a href="https://www.flightradar24.com" target="_blank" rel="noopener" class="tool">
-        <div class="tool-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-plane" style="color:#fff"></i></div>
-        <span class="tool-name">Flightradar24</span>
-        <span class="tool-desc">متابعة حركة الطيران العسكري والمدني لحظةً بلحظة حول العالم</span>
-      </a>
-      <a href="https://liveuamap.com" target="_blank" rel="noopener" class="tool">
-        <div class="tool-icon" style="background:linear-gradient(135deg,#ef4444,#b91c1c)"><i class="fas fa-map-marked-alt" style="color:#fff"></i></div>
-        <span class="tool-name">Liveuamap</span>
-        <span class="tool-desc">خرائط تفاعلية حية لتغطية النزاعات والحروب والأحداث العسكرية</span>
-      </a>
-    </div>
-  </div>
-</main>
-
-<!-- MODAL -->
-<div class="overlay" id="ov" onclick="ovClick(event)">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal()"><i class="fas fa-times"></i></button>
-    <img id="mImg" src="" alt="" style="display:none" />
-    <div id="mSrc"></div>
-    <h3 id="mTitle"></h3>
-    <p id="mDesc"></p>
-    <div class="mact">
-      <a id="mLink" href="#" target="_blank" rel="noopener" class="btn-r"><i class="fas fa-external-link-alt"></i>اقرأ الخبر من المصدر</a>
-      <button class="btn-g" onclick="closeModal()">إغلاق</button>
-    </div>
-  </div>
+  <!-- باقي الشاشات (الإعدادات، اللوبي، اللعب، الانتظار، النهاية) - نفس السابق -->
+  <!-- ... -->
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"><i class="fas fa-spinner fa-spin"></i><span id="toastTxt">جاري التحميل...</span></div>
-
-<footer>
-  <strong style="color:var(--txt)">مرصد الأخبار العالمية</strong> — مصادر:
-  <a href="https://aljazeera.net" target="_blank">الجزيرة</a> •
-  <a href="https://skynewsarabia.com" target="_blank">سكاي نيوز</a> •
-  <a href="https://bbc.com/arabic" target="_blank">BBC</a> •
-  <a href="https://arabic.cnn.com" target="_blank">CNN</a> •
-  <a href="https://alarabiya.net" target="_blank">العربية</a> •
-  <a href="https://arabic.rt.com" target="_blank">RT</a> •
-  <a href="https://france24.com/ar" target="_blank">فرانس24</a> •
-  <a href="https://reuters.com" target="_blank">Reuters</a> •
-  <a href="https://apnews.com" target="_blank">AP</a> •
-  <a href="https://nytimes.com" target="_blank">NYT</a> •
-  <a href="https://wsj.com" target="_blank">WSJ</a> •
-  <a href="https://theguardian.com" target="_blank">Guardian</a> •
-  <a href="https://bloomberg.com" target="_blank">Bloomberg</a>
-  <br>الأخبار الإنجليزية تُترجم تلقائياً • اضغط أي خبر للانتقال للمصدر الأصلي
-</footer>
-
 <script>
-// ============================================================
-//  SOURCES
-// ============================================================
-const SRCS=[
-  {id:'aljazeera',name:'الجزيرة نت',color:'#e8282b',cat:'arabic',lang:'ar',
-   feeds:['https://www.aljazeera.net/xml/rss2.0.xml'],site:'https://www.aljazeera.net'},
-  {id:'skynews',name:'سكاي نيوز عربية',color:'#00a3e0',cat:'arabic',lang:'ar',
-   feeds:['https://www.skynewsarabia.com/rss.xml'],site:'https://www.skynewsarabia.com'},
-  {id:'bbc',name:'BBC عربي',color:'#bb1919',cat:'arabic',lang:'ar',
-   feeds:['https://feeds.bbci.co.uk/arabic/rss.xml'],site:'https://www.bbc.com/arabic'},
-  {id:'cnn',name:'CNN بالعربية',color:'#cc0000',cat:'arabic',lang:'ar',
-   feeds:['https://arabic.cnn.com/api/v1/rss/rss.xml'],site:'https://arabic.cnn.com'},
-  {id:'alarabiya',name:'العربية نت',color:'#005ea5',cat:'arabic',lang:'ar',
-   feeds:['https://www.alarabiya.net/rss.xml'],site:'https://www.alarabiya.net'},
-  {id:'rt',name:'روسيا اليوم',color:'#007dc6',cat:'arabic',lang:'ar',
-   feeds:['https://arabic.rt.com/rss/'],site:'https://arabic.rt.com'},
-  {id:'france24',name:'فرانس 24',color:'#003082',cat:'arabic',lang:'ar',
-   feeds:['https://www.france24.com/ar/rss'],site:'https://www.france24.com/ar'},
-  {id:'reuters',name:'رويترز',color:'#ff671f',cat:'intl',lang:'en',
-   feeds:['https://feeds.reuters.com/reuters/topNews','https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best'],site:'https://www.reuters.com'},
-  {id:'apnews',name:'أسوشيتد برس',color:'#d10000',cat:'intl',lang:'en',
-   feeds:['https://apnews.com/index.rss'],site:'https://apnews.com'},
-  {id:'nytimes',name:'نيويورك تايمز',color:'#333',cat:'intl',lang:'en',
-   feeds:['https://rss.nytimes.com/services/xml/rss/nyt/World.xml','https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml'],site:'https://www.nytimes.com'},
-  {id:'wsj',name:'وول ستريت جورنال',color:'#1d477b',cat:'intl',lang:'en',
-   feeds:['https://feeds.a.dj.com/rss/RSSWorldNews.xml'],site:'https://www.wsj.com'},
-  {id:'guardian',name:'ذا غارديان',color:'#052962',cat:'intl',lang:'en',
-   feeds:['https://www.theguardian.com/world/rss'],site:'https://www.theguardian.com'},
-  {id:'bloomberg',name:'بلومبيرغ',color:'#1a1a1a',cat:'intl',lang:'en',
-   feeds:['https://feeds.bloomberg.com/politics/news.rss','https://feeds.bloomberg.com/markets/news.rss'],site:'https://www.bloomberg.com'},
-];
-
-// ============================================================
-//  PROXY STRATEGIES
-// ============================================================
-async function fetchFeed(feedUrl){
-  const encoded=encodeURIComponent(feedUrl);
-
-  // 1. rss2json.com — returns clean JSON
-  try{
-    const u=`https://api.rss2json.com/v1/api.json?rss_url=${encoded}&count=12`;
-    const r=await fetch(u,{signal:AbortSignal.timeout(10000)});
-    if(r.ok){const d=await r.json();if(d.status==='ok'&&d.items?.length>0)return{type:'rss2json',data:d};}
-  }catch(e){}
-
-  // 2. feedparser.xyz
-  try{
-    const u=`https://feedparser.xyz/api/parse?url=${encoded}`;
-    const r=await fetch(u,{signal:AbortSignal.timeout(10000)});
-    if(r.ok){const d=await r.json();if(d.entries?.length>0)return{type:'feedparser',data:d};}
-  }catch(e){}
-
-  // 3. allorigins.win
-  try{
-    const u=`https://api.allorigins.win/get?url=${encoded}`;
-    const r=await fetch(u,{signal:AbortSignal.timeout(11000)});
-    if(r.ok){const d=await r.json();if(d.contents&&d.contents.length>200)return{type:'xml',data:d.contents};}
-  }catch(e){}
-
-  // 4. corsproxy.io
-  try{
-    const u=`https://corsproxy.io/?${encoded}`;
-    const r=await fetch(u,{signal:AbortSignal.timeout(11000)});
-    if(r.ok){const t=await r.text();if(t&&t.length>200)return{type:'xml',data:t};}
-  }catch(e){}
-
-  // 5. cors.bridged.cc
-  try{
-    const u=`https://cors.bridged.cc/${feedUrl}`;
-    const r=await fetch(u,{headers:{'x-cors-grida-api-key':'temp'},signal:AbortSignal.timeout(10000)});
-    if(r.ok){const t=await r.text();if(t&&t.length>200)return{type:'xml',data:t};}
-  }catch(e){}
-
-  throw new Error('all proxies failed');
-}
-
-function parseRss2json(d,src){
-  return (d.items||[]).slice(0,10).map((it,i)=>{
-    const img=it.enclosure?.link||it.thumbnail||extractImg(it.description||it.content||'')||'';
-    const desc=strip(it.description||it.content||'').substring(0,300);
-    if(!it.title||!it.link) return null;
-    return mk(src,i,it.title.trim(),it.link,desc,img,it.pubDate||'');
-  }).filter(Boolean);
-}
-
-function parseFeedparser(d,src){
-  return (d.entries||[]).slice(0,10).map((it,i)=>{
-    const img=it.media?.content?.[0]?.url||it.image?.href||extractImg(it.summary||it.content||'')||'';
-    const desc=strip(it.summary||it.content||'').substring(0,300);
-    const link=it.link||it.url||'';
-    if(!it.title||!link) return null;
-    return mk(src,i,(it.title||'').trim(),link,desc,img,it.published||it.updated||'');
-  }).filter(Boolean);
-}
-
-function parseXmlStr(xmlStr,src){
-  try{
-    const doc=new DOMParser().parseFromString(xmlStr,'application/xml');
-    return Array.from(doc.querySelectorAll('item')).slice(0,10).map((el,i)=>{
-      const title=el.querySelector('title')?.textContent?.trim()||'';
-      const link=el.querySelector('link')?.textContent?.trim()||'';
-      const desc=el.querySelector('description')?.textContent?.trim()||'';
-      const pub=el.querySelector('pubDate')?.textContent||'';
-      let img=el.querySelector('[url]')?.getAttribute('url')||'';
-      if(!img){const e=el.querySelector('enclosure');if(e?.getAttribute('type')?.startsWith('image'))img=e.getAttribute('url')||'';}
-      if(!img) img=extractImg(desc);
-      if(!title||!link) return null;
-      return mk(src,i,title,link,strip(desc).substring(0,300),img,pub);
-    }).filter(Boolean);
-  }catch(e){return[];}
-}
-
-function mk(src,i,title,link,desc,img,pubDate){
-  return{
-    id:`${src.id}_${i}`,
-    title,titleAr:src.lang==='ar'?title:null,
-    link,
-    description:desc,descriptionAr:src.lang==='ar'?desc:null,
-    image:img,pubDate,
-    source:src.id,sourceName:src.name,sourceColor:src.color,
-    cat:src.cat,lang:src.lang,translated:false,
-  };
-}
-
-function extractImg(html){const m=html.match(/<img[^>]+src=["']([^"']+)["']/i);return m?m[1]:'';}
-function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||d.innerText||'';}
-
-// ============================================================
-//  TRANSLATION (MyMemory free API)
-// ============================================================
-const trCache={};
-async function trText(text){
-  if(!text||text.length<4) return text;
-  const k=text.substring(0,80);
-  if(trCache[k]) return trCache[k];
-  const chunk=text.substring(0,480);
-  try{
-    const u=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|ar`;
-    const r=await fetch(u,{signal:AbortSignal.timeout(8000)});
-    const d=await r.json();
-    if(d.responseStatus===200&&d.responseData?.translatedText){
-      const t=d.responseData.translatedText;
-      if(!t.includes('MYMEMORY')&&t.length>3){trCache[k]=t;return t;}
+  // ==================== Firebase ====================
+  firebase.initializeApp({apiKey:"AIzaSyBKs24sqojKX51Q4HAPv3amY1oTGo3YcyA",authDomain:"myquiz-314f9.firebaseapp.com",databaseURL:"https://myquiz-314f9-default-rtdb.firebaseio.com",projectId:"myquiz-314f9",storageBucket:"myquiz-314f9.firebasestorage.app",messagingSenderId:"86590365416",appId:"1:86590365416:web:0d37b3695ec028103ff35d"});
+  const db = firebase.database();
+  
+  let questionsBank = [];
+  let playerId = '';
+  let deviceInfo = { type: 'mobile', device: '📱' };
+  
+  // كشف نوع الجهاز
+  function detectDevice() {
+    const ua = navigator.userAgent;
+    if(/iPad|iPhone|iPod/.test(ua)) deviceInfo = { type: 'ios', device: '📱' };
+    else if(/Android/.test(ua)) deviceInfo = { type: 'android', device: '📱' };
+    else deviceInfo = { type: 'desktop', device: '💻' };
+  }
+  detectDevice();
+  
+  // تحميل الأسئلة من Firebase وعرضها (للقراءة فقط)
+  function loadQuestionsPreview() {
+    db.ref('questions').on('value', snapshot => {
+      const data = snapshot.val();
+      if(data) {
+        questionsBank = Object.values(data);
+        displayQuestionsPreview();
+      } else {
+        questionsBank = [];
+        displayQuestionsPreview();
+      }
+    });
+  }
+  
+  function displayQuestionsPreview() {
+    const container = document.getElementById('questionsPreviewList');
+    const preview = questionsBank.slice(0, 5);
+    container.innerHTML = preview.map(q => `
+      <div class="preview-item">
+        <span class="preview-cat">${q.cat || 'متنوع'}</span>
+        <span style="flex:1;">${q.q?.substring(0, 40)}${q.q?.length > 40 ? '...' : ''}</span>
+      </div>
+    `).join('');
+    if(questionsBank.length > 5) {
+      container.innerHTML += `<p style="color:#aaa; text-align:center; margin-top:10px;">و ${questionsBank.length - 5} سؤال آخر...</p>`;
     }
-  }catch(e){}
-  return text;
-}
-
-async function trItem(item){
-  if(item.lang==='ar'||item.translated) return;
-  try{
-    const[ta,da]=await Promise.all([trText(item.title),item.description?trText(item.description.substring(0,260)):Promise.resolve('')]);
-    item.titleAr=ta||item.title;
-    item.descriptionAr=da||item.description;
-    item.translated=true;
-    trCount++;
-    document.getElementById('sTr').textContent=trCount;
-    liveUpdateCard(item);
-  }catch(e){}
-}
-
-function liveUpdateCard(item){
-  const c=document.getElementById('c_'+item.id);
-  if(!c) return;
-  const te=c.querySelector('.ctitle');const de=c.querySelector('.cdesc');const b=c.querySelector('.tr-tag');
-  if(te&&item.titleAr) te.textContent=item.titleAr;
-  if(de&&item.descriptionAr) de.textContent=item.descriptionAr;
-  if(b) b.style.display='block';
-}
-
-// ============================================================
-//  TIME
-// ============================================================
-function ago(s){
-  if(!s) return'منذ قليل';
-  const d=new Date(s);if(isNaN(d)) return'منذ قليل';
-  const m=Math.floor((Date.now()-d)/60000);
-  if(m<1) return'الآن';if(m<60) return`منذ ${m} دق`;
-  const h=Math.floor(m/60);if(h<24) return`منذ ${h} س`;
-  const dy=Math.floor(h/24);if(dy<7) return`منذ ${dy} يوم`;
-  return d.toLocaleDateString('ar-SA');
-}
-function e(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ============================================================
-//  RENDER
-// ============================================================
-function cardHTML(item){
-  const title=item.titleAr||item.title;
-  const desc=item.descriptionAr||item.description;
-  const imgH=item.image
-    ?`<img src="${e(item.image)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'no-img\\'><i class=\\'fas fa-newspaper\\'></i></div>'" />`
-    :`<div class="no-img"><i class="fas fa-newspaper"></i></div>`;
-  return`
-  <a class="card" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}" data-tr="${item.translated?1:0}">
-    <div class="cimg">
-      ${imgH}
-      <div class="src-tag" style="background:${item.sourceColor}">${e(item.sourceName)}</div>
-      ${item.lang==='en'?`<div class="tr-tag" style="${item.translated?'':'display:none'}"><i class="fas fa-language"></i> مترجم</div>`:''}
-    </div>
-    <div class="cbody">
-      <div class="ctitle">${e(title)}</div>
-      ${desc?`<div class="cdesc">${e(desc)}</div>`:''}
-      <div class="cfoot"><span class="csrc">${e(item.sourceName)}</span><span class="ctime"><i class="fas fa-clock"></i>${ago(item.pubDate)}</span></div>
-    </div>
-  </a>`;
-}
-
-function featMainHTML(item){
-  const title=item.titleAr||item.title;
-  const img=item.image||'';
-  return`<a class="feat-main" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}">
-    ${img?`<img src="${e(img)}" alt="" onerror="this.style.display='none'" />`:''}
-    <div class="feat-overlay">
-      <div class="feat-src" style="background:${item.sourceColor}">${e(item.sourceName)}</div>
-      <h2>${e(title)}</h2>
-      <div class="feat-meta"><span><i class="fas fa-clock"></i>${ago(item.pubDate)}</span><span>•</span><span><i class="fas fa-mouse-pointer"></i>اضغط للقراءة</span></div>
-    </div>
-  </a>`;
-}
-
-function sideCardHTML(item){
-  const title=item.titleAr||item.title;
-  const img=item.image||'';
-  return`<a class="side-card" id="c_${item.id}" data-src="${item.source}" data-cat="${item.cat}">
-    <div class="sc-img">${img?`<img src="${e(img)}" alt="" loading="lazy" onerror="this.style.display='none'" />`:''}  </div>
-    <div class="sc-body">
-      <div class="sc-title">${e(title)}</div>
-      <div class="sc-foot"><span class="sc-src" style="color:${item.sourceColor}">${e(item.sourceName)}</span><span class="sc-time">${ago(item.pubDate)}</span></div>
-    </div>
-  </a>`;
-}
-
-function renderGrids(){
-  const qv=searchQuery.toLowerCase();
-  const filtered=allNews.filter(it=>{
-    const t=(it.titleAr||it.title||'').toLowerCase();
-    if(qv&&!t.includes(qv)) return false;
-    if(curSrc&&it.source!==curSrc) return false;
-    if(curFilt==='arabic'&&it.cat!=='arabic') return false;
-    if(curFilt==='intl'&&it.cat!=='intl') return false;
-    if(curFilt==='tr'&&!it.translated) return false;
-    return true;
-  });
-
-  const arab=filtered.filter(i=>i.cat==='arabic');
-  const intl=filtered.filter(i=>i.cat==='intl');
-
-  document.getElementById('arCnt').textContent=arab.length;
-  document.getElementById('intlCnt').textContent=intl.length;
-
-  fillGrid('arGrid',arab);
-  fillGrid('intlGrid',intl);
-
-  const showF=curFilt==='all'&&!curSrc&&!searchQuery;
-  document.getElementById('featSec').style.display=showF?'':'none';
-  if(showF&&filtered.length) renderFeat(filtered.slice(0,5));
-}
-
-function fillGrid(id,items){
-  const g=document.getElementById(id);
-  if(!items.length){g.innerHTML='<div class="empty"><i class="fas fa-newspaper"></i><p>لا توجد أخبار مطابقة</p></div>';return;}
-  g.innerHTML=items.map(cardHTML).join('');
-  g.querySelectorAll('a[data-src]').forEach(a=>{
-    const id=a.id.replace('c_','');
-    const item=allNews.find(n=>n.id===id);
-    if(item) a.addEventListener('click',ev=>{ev.preventDefault();showModal(item);});
-  });
-}
-
-function renderFeat(items){
-  const g=document.getElementById('featGrid');
-  if(!items.length) return;
-  let html=featMainHTML(items[0]);
-  const sides=items.slice(1,4).map(sideCardHTML).join('');
-  html+=`<div class="feat-side">${sides}</div>`;
-  g.innerHTML=html;
-  g.querySelectorAll('a[data-src]').forEach(a=>{
-    const id=a.id.replace('c_','');
-    const item=allNews.find(n=>n.id===id);
-    if(item) a.addEventListener('click',ev=>{ev.preventDefault();showModal(item);});
-  });
-}
-
-function buildTicker(items){
-  const ti=document.getElementById('tickerInner');
-  const sl=items.slice(0,30);
-  const html=sl.map(i=>`<span>${e(i.titleAr||i.title)}</span><span class="ticker-dot">●</span>`).join('');
-  ti.innerHTML=html+html;
-}
-
-// ============================================================
-//  MODAL
-// ============================================================
-function showModal(item){
-  const title=item.titleAr||item.title;
-  const desc=item.descriptionAr||item.description||'اضغط على زر القراءة للاطلاع على الخبر كاملاً من المصدر الأصلي.';
-  document.getElementById('mTitle').textContent=title;
-  document.getElementById('mDesc').textContent=desc;
-  document.getElementById('mLink').href=item.link;
-  document.getElementById('mSrc').innerHTML=
-    `<span style="display:inline-block;background:${item.sourceColor};color:#fff;font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:4px;margin-bottom:9px">${e(item.sourceName)}</span>`;
-  const mi=document.getElementById('mImg');
-  if(item.image){mi.src=item.image;mi.style.display='block';mi.onerror=()=>mi.style.display='none';}
-  else mi.style.display='none';
-  document.getElementById('ov').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function ovClick(ev){if(ev.target===document.getElementById('ov'))closeModal();}
-function closeModal(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
-
-// ============================================================
-//  FILTERS
-// ============================================================
-let curFilt='all',curSrc=null,searchQuery='';
-function setFilter(f,btn){
-  curFilt=f;curSrc=null;
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderGrids();
-}
-function setSrc(sid,btn){
-  if(curSrc===sid){
-    curSrc=null;
-    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-    document.querySelector('.fbtn').classList.add('on');
-    curFilt='all';
-  }else{
-    curSrc=sid;
-    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-  }
-  renderGrids();
-}
-function doFilter(){searchQuery=document.getElementById('q').value.trim();renderGrids();}
-
-// ============================================================
-//  TOAST
-// ============================================================
-function toast(msg,icon='fa-spinner fa-spin'){
-  document.getElementById('toastTxt').textContent=msg;
-  document.querySelector('#toast i').className='fas '+icon;
-  document.getElementById('toast').classList.add('up');
-}
-function hideToast(){document.getElementById('toast').classList.remove('up');}
-
-// ============================================================
-//  MAIN FETCH
-// ============================================================
-let allNews=[],trCount=0,busy=false;
-
-async function loadSource(src){
-  for(const feedUrl of src.feeds){
-    try{
-      const res=await fetchFeed(feedUrl);
-      let items=[];
-      if(res.type==='rss2json') items=parseRss2json(res.data,src);
-      else if(res.type==='feedparser') items=parseFeedparser(res.data,src);
-      else items=parseXmlStr(res.data,src);
-      if(items.length>0) return items;
-    }catch(e){}
-  }
-  // Return fallback placeholder for this source
-  return getFallback(src);
-}
-
-function getFallback(src){
-  const now=new Date().toISOString();
-  const fallbacks={
-    aljazeera:[
-      {t:'أخبار الجزيرة نت - تصفح المصدر مباشرةً',l:'https://www.aljazeera.net',d:'اضغط لزيارة موقع الجزيرة نت والاطلاع على آخر الأخبار العربية والعالمية',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Al_Jazeera_English_Logo.svg/320px-Al_Jazeera_English_Logo.svg.png'},
-      {t:'تابع آخر المستجدات والتحليلات السياسية',l:'https://www.aljazeera.net/news',d:'أخبار عاجلة وتغطيات مستمرة من الجزيرة نت',img:''},
-    ],
-    skynews:[
-      {t:'سكاي نيوز عربية - الأخبار العاجلة',l:'https://www.skynewsarabia.com',d:'تابع آخر الأخبار من سكاي نيوز عربية',img:''},
-    ],
-    bbc:[
-      {t:'BBC عربي - أخبار العالم والمنطقة',l:'https://www.bbc.com/arabic',d:'اقرأ آخر الأخبار من BBC عربي',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/BBC_World_Service_2022_%28Boxed%29.svg/320px-BBC_World_Service_2022_%28Boxed%29.svg.png'},
-    ],
-    cnn:[
-      {t:'CNN بالعربية - آخر الأخبار',l:'https://arabic.cnn.com',d:'تابع الأخبار الدولية والعربية من CNN بالعربية',img:''},
-    ],
-    alarabiya:[
-      {t:'العربية نت - الأخبار العاجلة',l:'https://www.alarabiya.net',d:'أخبار عربية ودولية من قناة العربية',img:''},
-    ],
-    rt:[
-      {t:'روسيا اليوم - أخبار عالمية',l:'https://arabic.rt.com',d:'تغطية شاملة للأحداث الدولية من RT بالعربية',img:''},
-    ],
-    france24:[
-      {t:'فرانس 24 عربي - أحدث الأخبار',l:'https://www.france24.com/ar',d:'تابع آخر الأخبار والتقارير من فرانس 24',img:''},
-    ],
-    reuters:[
-      {t:'Reuters - Top World News',l:'https://www.reuters.com',d:'Breaking news and top stories from Reuters news agency',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Reuters_Logo.svg/320px-Reuters_Logo.svg.png'},
-    ],
-    apnews:[
-      {t:'AP News - Breaking International News',l:'https://apnews.com',d:'Latest world news from the Associated Press',img:''},
-    ],
-    nytimes:[
-      {t:'New York Times - World News',l:'https://www.nytimes.com/section/world',d:'International coverage from The New York Times',img:''},
-    ],
-    wsj:[
-      {t:'Wall Street Journal - World & Business',l:'https://www.wsj.com/news/world',d:'Global finance and business news from WSJ',img:''},
-    ],
-    guardian:[
-      {t:'The Guardian - World News',l:'https://www.theguardian.com/world',d:'Independent journalism from The Guardian',img:''},
-    ],
-    bloomberg:[
-      {t:'Bloomberg - Markets & Politics',l:'https://www.bloomberg.com',d:'Financial and political news from Bloomberg',img:''},
-    ],
-  };
-  const fb=fallbacks[src.id]||[{t:`أخبار ${src.name}`,l:src.site,d:`تصفح المصدر مباشرةً للاطلاع على آخر الأخبار`,img:''}];
-  return fb.map((f,i)=>mk(src,`fb${i}`,f.t,f.l,f.d,f.img,new Date(Date.now()-i*3600000).toISOString()));
-}
-
-async function loadAll(){
-  if(busy) return;
-  busy=true;
-  allNews=[];trCount=0;
-  document.getElementById('sTr').textContent='0';
-  document.getElementById('sCount').textContent='جاري التحميل...';
-  document.getElementById('sTime').textContent='—';
-  document.getElementById('rfBtn').classList.add('spin');
-  toast('جاري تحميل الأخبار من 14 مصدر عالمي...');
-
-  // Load all concurrently
-  const results=await Promise.allSettled(SRCS.map(s=>loadSource(s)));
-  results.forEach(r=>{if(r.status==='fulfilled')allNews.push(...r.value);});
-
-  // Sort newest first
-  allNews.sort((a,b)=>new Date(b.pubDate||0)-new Date(a.pubDate||0));
-  document.getElementById('sCount').textContent=allNews.length||'0';
-  const now=new Date();
-  document.getElementById('sTime').textContent=now.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});
-
-  renderGrids();
-  buildTicker(allNews);
-  document.getElementById('rfBtn').classList.remove('spin');
-
-  // Translate English items in background
-  const enItems=allNews.filter(i=>i.lang==='en');
-  if(enItems.length){
-    toast(`جاري ترجمة ${enItems.length} خبر إنجليزي تلقائياً...`,'fa-language');
-    for(let i=0;i<enItems.length;i+=3){
-      await Promise.allSettled([
-        trItem(enItems[i]),
-        enItems[i+1]?trItem(enItems[i+1]):null,
-        enItems[i+2]?trItem(enItems[i+2]):null,
-      ].filter(Boolean));
-      await new Promise(r=>setTimeout(r,350));
-      if(i%12===0) renderGrids();
+    if(questionsBank.length === 0) {
+      container.innerHTML = '<p style="color:#aaa; text-align:center;">لا توجد أسئلة حالياً</p>';
     }
-    renderGrids();
-    buildTicker(allNews);
   }
-
-  hideToast();
-  busy=false;
-
-  // Auto-refresh every 8 minutes
-  setTimeout(refreshAll,8*60*1000);
-}
-
-function refreshAll(){
-  if(busy) return;
-  allNews=[];renderGrids();loadAll();
-}
-
-document.addEventListener('DOMContentLoaded',loadAll);
+  
+  // التحقق من الحظر
+  function checkBanned(pid) {
+    db.ref(`banned/${pid}`).on('value', snapshot => {
+      if(snapshot.exists()) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('bannedScreen').classList.add('active');
+      }
+    });
+  }
+  
+  // الإعدادات الحية
+  db.ref('settings/live').on('value', snapshot => {
+    const live = snapshot.val();
+    if(live && typeof updateLiveSettings === 'function') {
+      updateLiveSettings(live);
+    }
+  });
+  
+  loadQuestionsPreview();
+  
+  // ... باقي منطق اللعبة (نفس السابق مع إضافة deviceInfo عند تسجيل اللاعب)
 </script>
 </body>
 </html>

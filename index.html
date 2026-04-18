@@ -35,17 +35,23 @@
     .brand p{margin:6px 0 0;color:var(--muted);font-size:14px}
     .badge{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,49,49,.12);border:1px solid rgba(255,49,49,.22);color:#ffd3d3;font-size:13px}
     .grid{display:grid;gap:14px}
+    .mode-selector{display:flex;gap:12px;margin-bottom:16px}
+    .mode-btn{flex:1;padding:14px;border-radius:16px;background:#1a1a1a;border:2px solid transparent;cursor:pointer;text-align:center;font-weight:700}
+    .mode-btn.active{background:linear-gradient(135deg,var(--red),var(--red-dark));border-color:var(--red)}
     .join-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     input,button,textarea,select{font-family:inherit}
-    input[type="text"]{width:100%;background:#0c0c0c;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:14px;border-radius:15px;font-size:16px;outline:none}
+    input[type="text"],input[type="number"]{width:100%;background:#0c0c0c;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:14px;border-radius:15px;font-size:16px;outline:none}
     button{border:none;border-radius:16px;padding:14px 18px;font-weight:800;color:#fff;cursor:pointer;touch-action:manipulation;transition:.18s transform,.18s opacity}
     button:hover{transform:translateY(-1px)}
+    button:disabled{opacity:0.5;cursor:not-allowed}
     .btn-primary{background:linear-gradient(135deg,var(--red),var(--red-dark))}
     .btn-secondary{background:#1d1d1d;border:1px solid rgba(255,255,255,.08)}
-    .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .meta .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px}
+    .btn-success{background:#0f5c2e;border:1px solid var(--green)}
+    .btn-warning{background:#6a4b0c}
+    .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .meta .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center}
     .meta .label{font-size:12px;color:var(--muted)}
-    .meta .value{font-size:24px;font-weight:800;margin-top:4px}
+    .meta .value{font-size:20px;font-weight:800;margin-top:4px}
     .timer-wrap{position:relative;height:18px;background:#1a1a1a;border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
     .timer-fill{position:absolute;inset:0 auto 0 0;width:100%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));transition:width 1s linear}
     .question-card{padding:18px;border-radius:24px;background:linear-gradient(180deg,#111,#0a0a0a);border:1px solid rgba(255,255,255,.07)}
@@ -54,10 +60,9 @@
     .opts{display:grid;gap:10px}
     .opt{background:#121212;border:1px solid rgba(255,255,255,.08);padding:15px 16px;border-radius:18px;font-weight:700;text-align:right;cursor:pointer;transition:all 0.2s}
     .opt:hover:not(:disabled){background:#1f1f1f;transform:scale(1.01)}
-    .opt.correct{background:rgba(29,222,140,.12);border-color:rgba(29,222,140,.3);color:#baffdd}
-    .opt.wrong{background:rgba(255,49,49,.12);border-color:rgba(255,49,49,.3);color:#ffd1d1}
-    .opt.locked{opacity:.65;cursor:not-allowed}
-    .opt:disabled{cursor:not-allowed;opacity:0.6}
+    .opt.correct{background:rgba(29,222,140,.2);border-color:var(--green);color:#baffdd}
+    .opt.wrong{background:rgba(255,49,49,.2);border-color:var(--red);color:#ffd1d1}
+    .opt.disabled,.opt:disabled{opacity:0.5;cursor:not-allowed}
     .row{display:flex;gap:10px;flex-wrap:wrap}
     .hidden{display:none !important}
     .message{padding:12px 14px;border-radius:14px;font-size:14px;margin-bottom:12px}
@@ -67,14 +72,20 @@
     .danger{background:rgba(255,49,49,.1);border:1px solid rgba(255,49,49,.22);color:#ffd3d3}
     .footer-note{color:var(--muted);font-size:12px;text-align:center;margin-top:12px}
     .room-chip{display:inline-flex;padding:8px 10px;border-radius:999px;background:#171717;border:1px solid rgba(255,255,255,.08);font-size:13px}
-    .players-list{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px;max-height:150px;overflow-y:auto}
+    .players-list{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px;max-height:200px;overflow-y:auto}
     .players-list h4{margin:0 0 8px;font-size:14px;color:var(--muted)}
-    .players-list .player-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
-    .players-list .player-item:last-child{border-bottom:none}
-    .players-list .player-name{font-weight:600;color:#ffd3d3}
-    .players-list .player-status{font-size:11px;color:var(--green)}
-    .winner-msg{background:linear-gradient(135deg,rgba(255,49,49,.2),rgba(134,16,16,.2));border:2px solid var(--red);border-radius:18px;padding:12px;text-align:center;margin-top:12px}
-    .announcement{background:rgba(255,188,46,.15);border-right:3px solid var(--yellow);padding:10px;margin-bottom:12px;border-radius:8px}
+    .player-item{display:flex;justify-content:space-between;align-items:center;padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+    .player-item:last-child{border-bottom:none}
+    .player-name{font-weight:600;color:#ffd3d3}
+    .player-ready{color:var(--green);font-size:11px}
+    .player-not-ready{color:var(--muted);font-size:11px}
+    .ready-badge{background:rgba(29,222,140,.15);color:var(--green);padding:4px 8px;border-radius:12px;font-size:11px}
+    .waiting-badge{background:rgba(255,188,46,.15);color:var(--yellow);padding:4px 8px;border-radius:12px;font-size:11px}
+    .room-code{background:linear-gradient(135deg,var(--red),var(--red-dark));padding:12px;border-radius:16px;text-align:center;margin-bottom:12px}
+    .room-code span{font-size:28px;font-weight:800;letter-spacing:4px}
+    .settings-panel{background:var(--panel-2);border-radius:18px;padding:12px;margin-bottom:12px}
+    .settings-panel h4{margin:0 0 10px;font-size:16px}
+    .range-setting{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
     @media (max-width:720px){
       .join-grid,.meta{grid-template-columns:1fr}
       .question-card h2{font-size:21px}
@@ -85,73 +96,145 @@
 </head>
 <body>
   <div class="app grid">
+    <!-- شاشة الدخول -->
     <section class="card" id="gateCard">
       <div class="top">
         <div class="brand">
           <h1>مسابقة الغاز مباشرة</h1>
-          <p>واجهة سريعة ومتوافقة مع iPhone مع مزامنة فورية للإعدادات.</p>
+          <p>اختر طريقة اللعب وابدأ التحدي</p>
         </div>
         <div class="badge">Dark Mode • Red/Black UI</div>
       </div>
-      <div class="join-grid">
+      
+      <div class="mode-selector">
+        <div class="mode-btn" data-mode="solo">🎮 لعب فردي</div>
+        <div class="mode-btn" data-mode="multi">👥 لعب جماعي</div>
+      </div>
+      
+      <div id="soloMode" class="join-grid">
         <div>
           <label>اسم اللاعب</label>
-          <input type="text" id="playerName" placeholder="اكتب اسمك">
+          <input type="text" id="soloPlayerName" placeholder="اكتب اسمك">
+        </div>
+      </div>
+      
+      <div id="multiMode" class="join-grid hidden">
+        <div>
+          <label>اسم اللاعب</label>
+          <input type="text" id="multiPlayerName" placeholder="اكتب اسمك">
         </div>
         <div>
-          <label>اسم الغرفة</label>
-          <input type="text" id="roomName" placeholder="مثال: room-1">
+          <label>كود الغرفة</label>
+          <input type="text" id="roomCode" placeholder="أدخل كود الغرفة">
         </div>
       </div>
-      <div class="row" style="margin-top:12px">
-        <button class="btn-primary" id="joinBtn">دخول اللعبة</button>
+      
+      <div id="createRoomPanel" class="settings-panel hidden">
+        <h4>⚙️ إعدادات الغرفة (لمنشئ الغرفة فقط)</h4>
+        <div class="range-setting">
+          <label>عدد الجولات (5-30)</label>
+          <input type="number" id="createRounds" min="5" max="30" value="10" style="width:80px">
+        </div>
+        <div class="range-setting">
+          <label>وقت التفكير (ثواني)</label>
+          <input type="number" id="createThinkTime" min="5" max="60" value="15" style="width:80px">
+        </div>
+        <div class="range-setting">
+          <label>وقت الإجابة (ثواني)</label>
+          <input type="number" id="createAnswerTime" min="3" max="30" value="7" style="width:80px">
+        </div>
       </div>
-      <div id="gateMsg" class="message info" style="margin-top:12px">جاري التحقق من بصمة الجهاز وقائمة الحظر...</div>
-      <div class="footer-note">سيتم حفظ بصمة الجهاز في localStorage والتحقق منها قبل تحميل واجهة اللعب.</div>
+      
+      <div class="row" style="margin-top:12px">
+        <button class="btn-primary" id="createRoomBtn">➕ إنشاء غرفة جديدة</button>
+        <button class="btn-secondary" id="joinRoomBtn">🔗 انضمام لغرفة</button>
+        <button class="btn-primary" id="startSoloBtn" style="display:none">🎮 بدء اللعب الفردي</button>
+      </div>
+      <div id="gateMsg" class="message info" style="margin-top:12px">اختر وضع اللعب أولاً</div>
     </section>
 
+    <!-- شاشة انتظار الغرفة -->
+    <section class="card hidden" id="lobbyCard">
+      <div class="top">
+        <div class="brand">
+          <h1 id="lobbyTitle">غرفة الانتظار</h1>
+          <p>كود الغرفة: <span class="room-chip" id="displayRoomCode">—</span></p>
+        </div>
+        <div class="badge">👥 <span id="playersCountLobby">0</span> لاعب</div>
+      </div>
+      
+      <div id="hostSettingsPanel" class="settings-panel hidden">
+        <h4>🎮 إعدادات المسابقة (أنت منشئ الغرفة)</h4>
+        <div class="range-setting">
+          <label>عدد الجولات</label>
+          <input type="number" id="hostRounds" min="5" max="30" value="10" style="width:80px">
+          <button class="btn-secondary" id="updateSettingsBtn" style="width:auto;padding:8px 12px">تحديث</button>
+        </div>
+        <div class="range-setting">
+          <label>وقت التفكير (ث)</label>
+          <input type="number" id="hostThinkTime" min="5" max="60" value="15" style="width:80px">
+        </div>
+        <div class="range-setting">
+          <label>وقت الإجابة (ث)</label>
+          <input type="number" id="hostAnswerTime" min="3" max="30" value="7" style="width:80px">
+        </div>
+      </div>
+      
+      <div class="players-list">
+        <h4>📋 قائمة اللاعبين</h4>
+        <div id="lobbyPlayersList"></div>
+      </div>
+      
+      <div class="row" style="margin-top:14px">
+        <button class="btn-success" id="readyBtn">✅ جاهز</button>
+        <button class="btn-primary" id="startGameBtn" style="display:none">🚀 بدء المسابقة</button>
+        <button class="btn-secondary" id="leaveLobbyBtn">🚪 مغادرة</button>
+      </div>
+      <div id="lobbyMsg" class="message info">انتظر بقية اللاعبين... الجميع جاهز سيبدأ اللعب تلقائياً</div>
+    </section>
+
+    <!-- شاشة اللعب -->
     <section class="card hidden" id="gameCard">
       <div class="top">
         <div class="brand">
-          <h1 id="welcomeTitle">أهلاً بك</h1>
-          <p>الغرفة الحالية: <span class="room-chip" id="roomBadge">—</span></p>
+          <h1 id="gameWelcomeTitle">أهلاً بك</h1>
+          <p>الغرفة: <span class="room-chip" id="gameRoomBadge">—</span></p>
         </div>
-        <div class="badge">ID: <span id="deviceBadge"></span></div>
+        <div class="badge">🎯 النتيجة: <span id="gameScore">0</span></div>
       </div>
-
-      <div id="announcementBox" class="announcement hidden"></div>
 
       <div class="meta">
         <div class="box"><div class="label">الجولة</div><div class="value" id="roundCounter">1 / 10</div></div>
-        <div class="box"><div class="label">النتيجة</div><div class="value" id="scoreValue">0</div></div>
         <div class="box"><div class="label">المؤقت</div><div class="value" id="timerValue">15</div></div>
+        <div class="box"><div class="label">المتبقي</div><div class="value" id="playersRemaining">0</div></div>
+        <div class="box"><div class="label">انتظار</div><div class="value" id="waitingCount">0</div></div>
       </div>
 
       <div style="margin:14px 0">
         <div class="timer-wrap"><div class="timer-fill" id="timerFill"></div></div>
       </div>
 
-      <div id="playersListContainer" class="players-list">
-        <h4>📋 اللاعبون في الغرفة (<span id="playersCount">0</span>)</h4>
-        <div id="playersList"></div>
+      <div class="players-list" style="max-height:120px">
+        <h4>👥 اللاعبون في المسابقة</h4>
+        <div id="gamePlayersList"></div>
       </div>
 
-      <div id="syncNotice" class="message info">تمت مزامنة الإعدادات الحالية. سيتم تطبيق أي تعديل مباشر من لوحة الإدارة تلقائياً.</div>
-
-      <div class="question-card" id="questionArea" style="margin-top:14px">
+      <div class="question-card" style="margin-top:14px">
         <div class="question-meta">
           <span id="phaseLabel">مرحلة التفكير</span>
           <span id="categoryLabel">—</span>
         </div>
-        <h2 id="questionText">اضغط «بدء اللعبة» لبدء أول سؤال.</h2>
+        <h2 id="questionText">جاري تحميل السؤال...</h2>
         <div class="opts" id="optionsWrap"></div>
       </div>
 
-      <div class="row" style="margin-top:14px">
-        <button class="btn-primary" id="startBtn">بدء اللعبة</button>
-        <button class="btn-secondary hidden" id="leaveBtn">مغادرة الغرفة</button>
+      <div id="resultOverlay" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.95);border:2px solid var(--red);border-radius:24px;padding:24px;z-index:100;text-align:center;display:none">
+        <h2 id="resultTitle">🏆</h2>
+        <p id="resultMessage"></p>
+        <button class="btn-primary" id="closeResultBtn">متابعة</button>
       </div>
-      <div id="gameMsg" class="message warning" style="margin-top:12px">سيتم تحميل الأسئلة من Firebase عند بدء اللعبة.</div>
+      
+      <div id="gameMsg" class="message warning" style="margin-top:12px"></div>
     </section>
   </div>
 
@@ -173,38 +256,38 @@
     const state = {
       deviceId: '',
       playerName: '',
-      room: '',
+      roomCode: '',
+      isHost: false,
+      isReady: false,
+      gameMode: 'solo',
+      gameStarted: false,
       settings: { rounds: 10, thinkTime: 15, answerTime: 7 },
-      rawQuestions: [],
       questions: [],
+      currentQuestion: null,
       questionIndex: 0,
       score: 0,
-      selected: null,
-      phase: 'idle',
-      remaining: 0,
+      selectedAnswer: null,
+      phase: 'waiting',
+      remainingTime: 0,
       timer: null,
-      connected: false,
-      hasJoined: false,
-      kickedAtSeen: 0,
-      playersInRoom: {},
+      players: {},
       roundAnswers: {},
-      waitingForAll: false,
-      roundEndTimer: null
+      hasAnswered: false
     };
 
-    function escapeHtml(text) {
-      return String(text || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function generateRoomCode() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
-    function showMsg(id, text, cls) {
-      const box = el(id);
+    function escapeHtml(text) {
+      if(!text) return '';
+      return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function showMsg(target, text, type) {
+      const box = el(target);
       if(box){
-        box.className = 'message ' + cls;
+        box.className = 'message ' + type;
         box.textContent = text;
       }
     }
@@ -214,460 +297,535 @@
       if (/iPhone/i.test(ua)) return 'iPhone';
       if (/iPad/i.test(ua)) return 'iPad';
       if (/Android/i.test(ua)) return 'Android';
-      if (/Windows/i.test(ua)) return 'Windows';
-      if (/Macintosh|Mac OS/i.test(ua)) return 'Mac';
       return 'Web';
     }
 
     function createFingerprint() {
       const existing = localStorage.getItem('quizDeviceId');
       if (existing) return existing;
-      const seed = [navigator.userAgent, navigator.language, screen.width + 'x' + screen.height, new Date().getTimezoneOffset(), Math.random().toString(36).slice(2)].join('|');
-      let hash = 0;
-      for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-      const id = 'dev_' + Math.abs(hash).toString(36) + '_' + Date.now().toString(36);
+      const id = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
       localStorage.setItem('quizDeviceId', id);
       return id;
     }
 
-    function shuffle(arr) {
-      const clone = arr.slice();
-      for (let i = clone.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [clone[i], clone[j]] = [clone[j], clone[i]];
+    function shuffleArray(arr) {
+      const clone = [...arr];
+      for(let i=clone.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [clone[i],clone[j]]=[clone[j],clone[i]];
       }
       return clone;
     }
 
-    function playBeep(type) {
-      try {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (!Ctx) return;
-        const ctx = new Ctx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type === 'good' ? 'triangle' : type === 'bad' ? 'sawtooth' : 'square';
-        osc.frequency.value = type === 'good' ? 740 : type === 'bad' ? 180 : 420;
-        gain.gain.value = 0.05;
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start();
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
-        osc.stop(ctx.currentTime + 0.25);
-      } catch(e) {}
-    }
-
-    function updateTimerUi() {
-      el('timerValue').textContent = state.remaining;
-      const total = state.phase === 'answer' ? state.settings.answerTime : state.settings.thinkTime;
-      const pct = total ? Math.max(0, Math.min(100, (state.remaining / total) * 100)) : 0;
-      if(el('timerFill')) el('timerFill').style.width = pct + '%';
-    }
-
-    function renderOptions(question, reveal) {
-      const wrap = el('optionsWrap');
-      if (!question || !wrap) { if(wrap) wrap.innerHTML = ''; return; }
-      wrap.innerHTML = question.opts.map(function(opt){
-        let cls = 'opt';
-        if (reveal && opt === question.ans) cls += ' correct';
-        else if (reveal && state.selected === opt && opt !== question.ans) cls += ' wrong';
-        else if (state.selected) cls += ' locked';
-        return `<button class="${cls}" ${state.phase !== 'thinking' || state.selected ? 'disabled' : ''} data-opt="${encodeURIComponent(opt)}">${escapeHtml(opt)}</button>`;
-      }).join('');
-      Array.prototype.forEach.call(wrap.querySelectorAll('[data-opt]'), function(btn){
-        btn.addEventListener('click', function(){
-          window.selectOption(decodeURIComponent(this.getAttribute('data-opt')));
-        });
+    function loadQuestions() {
+      return db.ref('questions').once('value').then(snap => {
+        const raw = snap.val() || {};
+        const questionsList = Object.values(raw);
+        state.questions = shuffleArray(questionsList);
+        return state.questions;
       });
     }
 
-    function renderQuestion() {
-      const q = state.questions[state.questionIndex];
-      if (!q) {
-        if(el('questionText')) el('questionText').textContent = 'لا توجد أسئلة كافية حالياً. أضف أسئلة من لوحة التحكم.';
-        if(el('categoryLabel')) el('categoryLabel').textContent = '—';
-        renderOptions(null, false);
+    function updateTimerUI() {
+      el('timerValue').textContent = state.remainingTime;
+      const total = state.phase === 'answer' ? state.settings.answerTime : state.settings.thinkTime;
+      const pct = total ? (state.remainingTime / total) * 100 : 0;
+      el('timerFill').style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+
+    function renderQuestionUI() {
+      if(!state.currentQuestion){
+        el('questionText').textContent = 'لا توجد أسئلة متاحة';
         return;
       }
-      if(el('questionText')) el('questionText').textContent = q.q;
-      if(el('categoryLabel')) el('categoryLabel').textContent = q.cat || 'عام';
-      if(el('roundCounter')) el('roundCounter').textContent = (state.questionIndex + 1) + ' / ' + state.settings.rounds;
-      renderOptions(q, state.phase === 'answer');
-    }
-
-    function checkAllPlayersAnswered() {
-      const totalPlayers = Object.keys(state.playersInRoom).length;
-      if(totalPlayers === 0) return true;
-      const answeredCount = Object.keys(state.roundAnswers).length;
-      return answeredCount >= totalPlayers;
-    }
-
-    function showWinnerAndProceed() {
-      if(state.roundEndTimer) clearTimeout(state.roundEndTimer);
+      el('questionText').textContent = state.currentQuestion.q;
+      el('categoryLabel').textContent = state.currentQuestion.cat || 'عام';
+      el('roundCounter').textContent = (state.questionIndex + 1) + ' / ' + state.settings.rounds;
       
-      // حساب النتائج المؤقتة للجولة الحالية
-      const currentQuestion = state.questions[state.questionIndex];
-      let winners = [];
-      if(currentQuestion){
-        for(const [playerId, answerData] of Object.entries(state.roundAnswers)){
-          if(answerData.correct){
-            winners.push(answerData.player);
-          }
-        }
-      }
+      const wrap = el('optionsWrap');
+      wrap.innerHTML = state.currentQuestion.opts.map(opt => `
+        <button class="opt" data-opt="${escapeHtml(opt)}" ${state.phase !== 'thinking' || state.hasAnswered ? 'disabled' : ''}>
+          ${escapeHtml(opt)}
+        </button>
+      `).join('');
       
-      const winnerMsg = winners.length > 0 ? `🏆 الفائزون في هذه الجولة: ${winners.join(', ')}` : '😢 لم يجب أحد إجابة صحيحة في هذه الجولة';
-      
-      const winnerDiv = document.createElement('div');
-      winnerDiv.className = 'winner-msg';
-      winnerDiv.innerHTML = winnerMsg;
-      if(el('playersListContainer')) el('playersListContainer').insertAdjacentElement('afterend', winnerDiv);
-      setTimeout(() => winnerDiv.remove(), 3000);
-      
-      // الانتقال للجولة التالية بعد 2 ثانية
-      state.roundEndTimer = setTimeout(() => {
-        state.questionIndex++;
-        state.selected = null;
-        state.roundAnswers = {};
-        state.waitingForAll = false;
-        
-        if (state.questionIndex >= Math.min(state.settings.rounds, state.questions.length)) {
-          finishGame();
-        } else {
-          renderQuestion();
-          startPhase('thinking');
-        }
-      }, 2000);
-    }
-
-    function finishGame() {
-      clearInterval(state.timer);
-      if(state.roundEndTimer) clearTimeout(state.roundEndTimer);
-      state.phase = 'done';
-      if(el('phaseLabel')) el('phaseLabel').textContent = 'انتهت اللعبة';
-      if(el('questionText')) el('questionText').textContent = '🏆 نهاية المسابقة! 🏆\n\n' + state.playerName + '، نتيجتك النهائية: ' + state.score + ' نقطة';
-      if(el('categoryLabel')) el('categoryLabel').textContent = 'تمت ' + Math.min(state.settings.rounds, state.questions.length) + ' جولات';
-      if(el('optionsWrap')) el('optionsWrap').innerHTML = '';
-      if(el('startBtn')) el('startBtn').classList.remove('hidden');
-      showMsg('gameMsg', 'تم إنهاء الجولات بنجاح.', 'success');
-      db.ref('rooms/' + state.room + '/scores/' + state.deviceId).set({
-        name: state.playerName,
-        score: state.score,
-        finalScore: state.score,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP
+      document.querySelectorAll('.opt').forEach(btn => {
+        btn.addEventListener('click', () => selectAnswer(btn.dataset.opt));
       });
     }
 
-    function startPhase(phase) {
+    function selectAnswer(opt) {
+      if(state.phase !== 'thinking' || state.hasAnswered) return;
+      
+      state.hasAnswered = true;
+      const isCorrect = (opt === state.currentQuestion.ans);
+      if(isCorrect) state.score++;
+      
+      el('gameScore').textContent = state.score;
+      
+      // تغيير لون الخيار المختار
+      document.querySelectorAll('.opt').forEach(btn => {
+        btn.disabled = true;
+        if(btn.dataset.opt === opt){
+          btn.classList.add(isCorrect ? 'correct' : 'wrong');
+        }
+        if(btn.dataset.opt === state.currentQuestion.ans && isCorrect === false){
+          btn.classList.add('correct');
+        }
+      });
+      
+      // تسجيل الإجابة في قاعدة البيانات
+      db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex + '/' + state.deviceId).set({
+        playerId: state.deviceId,
+        playerName: state.playerName,
+        answer: opt,
+        correct: isCorrect,
+        score: state.score,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+      
+      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({
+        answeredCurrent: true,
+        currentScore: state.score
+      });
+      
+      showMsg('gameMsg', isCorrect ? '✅ إجابة صحيحة! +1 نقطة' : '❌ إجابة خاطئة', isCorrect ? 'success' : 'danger');
+    }
+
+    function startRoundPhase(phase) {
       clearInterval(state.timer);
       state.phase = phase;
-      state.remaining = phase === 'answer' ? state.settings.answerTime : state.settings.thinkTime;
-      if(el('phaseLabel')) el('phaseLabel').textContent = phase === 'answer' ? 'عرض الإجابة' : 'مرحلة التفكير';
-      updateTimerUi();
-      if (phase === 'answer') renderOptions(state.questions[state.questionIndex], true);
+      state.hasAnswered = false;
       
-      state.timer = setInterval(function(){
-        state.remaining--;
-        updateTimerUi();
-        if (state.remaining <= 3 && state.remaining > 0) playBeep('tick');
-        if (state.remaining <= 0) {
+      if(phase === 'thinking'){
+        state.remainingTime = state.settings.thinkTime;
+        el('phaseLabel').textContent = '💭 مرحلة التفكير';
+      } else {
+        state.remainingTime = state.settings.answerTime;
+        el('phaseLabel').textContent = '📖 عرض الإجابة الصحيحة';
+        // عرض الإجابة الصحيحة للجميع
+        document.querySelectorAll('.opt').forEach(btn => {
+          if(btn.dataset.opt === state.currentQuestion.ans){
+            btn.classList.add('correct');
+          }
+          btn.disabled = true;
+        });
+      }
+      
+      updateTimerUI();
+      
+      state.timer = setInterval(() => {
+        state.remainingTime--;
+        updateTimerUI();
+        
+        if(state.remainingTime <= 0){
           clearInterval(state.timer);
-          if (phase === 'thinking') {
-            playBeep(state.selected === state.questions[state.questionIndex].ans ? 'good' : 'bad');
-            // إذا لم يجب اللاعب، نحسب إجابته كخطأ
-            if(!state.selected){
-              state.roundAnswers[state.deviceId] = {
-                player: state.playerName,
-                questionIndex: state.questionIndex,
+          if(phase === 'thinking'){
+            // إذا لم يجب اللاعب، نسجل إجابة فارغة
+            if(!state.hasAnswered){
+              db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex + '/' + state.deviceId).set({
+                playerId: state.deviceId,
+                playerName: state.playerName,
                 answer: null,
                 correct: false,
-                answeredAt: Date.now()
-              };
-              db.ref('rooms/' + state.room + '/roundAnswers/' + state.questionIndex + '/' + state.deviceId).set({
-                player: state.playerName,
-                answer: null,
-                correct: false
+                score: state.score,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
               });
+              db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({ answeredCurrent: true });
             }
-            
-            // التحقق من جميع اللاعبين
-            if(checkAllPlayersAnswered()){
-              startPhase('answer');
-            } else {
-              state.waitingForAll = true;
-              if(el('phaseLabel')) el('phaseLabel').textContent = 'انتظار باقي اللاعبين...';
-              showMsg('gameMsg', 'جاري انتظار إجابات باقي اللاعبين...', 'info');
-              // فحص كل ثانية
-              const waitInterval = setInterval(() => {
-                if(checkAllPlayersAnswered()){
-                  clearInterval(waitInterval);
-                  if(state.phase === 'thinking') startPhase('answer');
-                }
-              }, 1000);
-            }
+            // الانتظار لجميع اللاعبين
+            el('phaseLabel').textContent = '⏳ انتظار بقية اللاعبين...';
+            showMsg('gameMsg', 'جاري انتظار إجابات باقي اللاعبين...', 'info');
           } else {
-            // مرحلة الإجابة انتهت، نعرض الفائز وننتقل
-            showWinnerAndProceed();
+            // الانتقال للجولة التالية
+            nextRound();
           }
         }
       }, 1000);
-      updatePlayerPresence();
     }
 
-    window.selectOption = function(opt) {
-      if (state.phase !== 'thinking' || state.selected || state.waitingForAll) return;
-      state.selected = opt;
-      const q = state.questions[state.questionIndex];
-      const isCorrect = (opt === q.ans);
-      if (isCorrect) state.score++;
-      if(el('scoreValue')) el('scoreValue').textContent = state.score;
-      renderOptions(q, false);
-      playBeep(isCorrect ? 'good' : 'bad');
+    function nextRound() {
+      state.questionIndex++;
       
-      // تسجيل الإجابة
-      state.roundAnswers[state.deviceId] = {
-        player: state.playerName,
-        questionIndex: state.questionIndex,
-        answer: opt,
-        correct: isCorrect,
-        answeredAt: Date.now()
-      };
-      
-      db.ref('rooms/' + state.room + '/roundAnswers/' + state.questionIndex + '/' + state.deviceId).set({
-        player: state.playerName,
-        answer: opt,
-        correct: isCorrect,
-        answeredAt: firebase.database.ServerValue.TIMESTAMP
-      });
-      
-      // التحقق إذا كان جميع اللاعبين أجابوا
-      if(checkAllPlayersAnswered() && !state.waitingForAll){
-        clearInterval(state.timer);
-        startPhase('answer');
-      } else {
-        showMsg('gameMsg', 'تم تسجيل إجابتك! جاري انتظار باقي اللاعبين...', 'info');
-        if(el('phaseLabel')) el('phaseLabel').textContent = 'تم الإجابة - انتظار الآخرين';
-      }
-    };
-
-    function startGame() {
-      if (!state.questions.length) {
-        showMsg('gameMsg', 'لا توجد أسئلة حالياً داخل قاعدة البيانات.', 'danger');
+      if(state.questionIndex >= Math.min(state.settings.rounds, state.questions.length)){
+        endGame();
         return;
       }
-      state.questionIndex = 0;
-      state.score = 0;
-      state.selected = null;
-      state.roundAnswers = {};
-      state.waitingForAll = false;
-      if(el('scoreValue')) el('scoreValue').textContent = '0';
-      if(el('startBtn')) el('startBtn').classList.add('hidden');
-      if(el('leaveBtn')) el('leaveBtn').classList.remove('hidden');
       
-      // تنظيف البيانات السابقة للجولات
-      db.ref('rooms/' + state.room + '/roundAnswers').remove();
+      state.currentQuestion = state.questions[state.questionIndex];
+      state.hasAnswered = false;
       
-      renderQuestion();
-      startPhase('thinking');
-      showMsg('gameMsg', 'بدأت اللعبة. أي تعديل من لوحة الإدارة سيتم مزامنته مباشرة.', 'info');
+      // reset answers for new round
+      db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex).remove();
+      db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
+        const players = snap.val() || {};
+        Object.keys(players).forEach(pid => {
+          db.ref('rooms/' + state.roomCode + '/players/' + pid).update({ answeredCurrent: false });
+        });
+      });
+      
+      renderQuestionUI();
+      startRoundPhase('thinking');
     }
 
-    function updatePlayerPresence() {
-      if (!state.hasJoined) return;
-      db.ref('players/' + state.deviceId).update({
-        id: state.deviceId,
-        name: state.playerName,
-        room: state.room,
-        deviceType: detectDeviceType(),
-        status: 'online',
-        phase: state.phase,
-        currentQuestion: state.questionIndex,
-        score: state.score,
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    function endGame() {
+      clearInterval(state.timer);
+      state.gameStarted = false;
+      state.phase = 'ended';
+      
+      // جمع النتائج النهائية
+      db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
+        const players = snap.val() || {};
+        const results = Object.values(players).sort((a,b) => (b.currentScore || 0) - (a.currentScore || 0));
+        
+        const winner = results[0];
+        const resultDiv = el('resultOverlay');
+        el('resultTitle').textContent = '🏆 نهاية المسابقة 🏆';
+        el('resultMessage').innerHTML = `
+          الفائز: ${escapeHtml(winner.name)}<br>
+          النتيجة: ${winner.currentScore || 0} نقطة<br><br>
+          ${results.map((p,i) => `${i+1}. ${escapeHtml(p.name)}: ${p.currentScore || 0} نقطة`).join('<br>')}
+        `;
+        resultDiv.style.display = 'block';
+        
+        // حفظ النتائج
+        db.ref('rooms/' + state.roomCode + '/finalResults').set({
+          winner: winner.name,
+          winnerId: winner.id,
+          results: results,
+          endedAt: firebase.database.ServerValue.TIMESTAMP
+        });
       });
-      db.ref('rooms/' + state.room + '/players/' + state.deviceId).set({
-        name: state.playerName,
-        deviceId: state.deviceId,
-        score: state.score,
-        joinedAt: firebase.database.ServerValue.TIMESTAMP
+      
+      el('phaseLabel').textContent = '🎮 انتهت المسابقة';
+      el('optionsWrap').innerHTML = '';
+    }
+
+    function startGame() {
+      if(state.gameStarted) return;
+      if(Object.keys(state.players).length < 1 && state.gameMode === 'multi'){
+        showMsg('lobbyMsg', 'لا يوجد لاعبون آخرون في الغرفة', 'danger');
+        return;
+      }
+      
+      // التحقق من أن جميع اللاعبين جاهزون
+      const allReady = Object.values(state.players).every(p => p.ready === true);
+      if(!allReady && state.gameMode === 'multi'){
+        showMsg('lobbyMsg', 'ليس جميع اللاعبين جاهزين بعد', 'warning');
+        return;
+      }
+      
+      loadQuestions().then(() => {
+        if(state.questions.length < state.settings.rounds){
+          showMsg('gameMsg', `لا توجد أسئلة كافية. المتاح: ${state.questions.length}، المطلوب: ${state.settings.rounds}`, 'danger');
+          return;
+        }
+        
+        state.gameStarted = true;
+        state.questionIndex = 0;
+        state.score = 0;
+        state.currentQuestion = state.questions[0];
+        state.hasAnswered = false;
+        
+        el('gameScore').textContent = '0';
+        el('lobbyCard').classList.add('hidden');
+        el('gameCard').classList.remove('hidden');
+        el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
+        el('gameRoomBadge').textContent = state.roomCode;
+        
+        renderQuestionUI();
+        startRoundPhase('thinking');
+        
+        // تحديث حالة اللعبة في قاعدة البيانات
+        db.ref('rooms/' + state.roomCode).update({
+          gameStarted: true,
+          startTime: firebase.database.ServerValue.TIMESTAMP,
+          currentRound: 0,
+          settings: state.settings
+        });
+      }).catch(err => {
+        showMsg('gameMsg', 'فشل تحميل الأسئلة: ' + err.message, 'danger');
+      });
+    }
+
+    function createRoom() {
+      const playerName = (state.gameMode === 'solo' ? el('soloPlayerName') : el('multiPlayerName')).value.trim();
+      if(!playerName){
+        showMsg('gateMsg', 'الرجاء إدخال اسم اللاعب', 'danger');
+        return;
+      }
+      
+      state.playerName = playerName;
+      state.deviceId = createFingerprint();
+      state.roomCode = generateRoomCode();
+      state.isHost = true;
+      state.gameMode = document.querySelector('.mode-btn.active')?.dataset.mode || 'solo';
+      
+      if(state.gameMode === 'solo'){
+        state.settings.rounds = parseInt(el('createRounds').value) || 10;
+        state.settings.thinkTime = parseInt(el('createThinkTime').value) || 15;
+        state.settings.answerTime = parseInt(el('createAnswerTime').value) || 7;
+        startGame();
+        return;
+      }
+      
+      // إنشاء الغرفة في Firebase
+      const roomData = {
+        roomCode: state.roomCode,
+        hostId: state.deviceId,
+        hostName: state.playerName,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        gameStarted: false,
+        settings: {
+          rounds: parseInt(el('createRounds').value) || 10,
+          thinkTime: parseInt(el('createThinkTime').value) || 15,
+          answerTime: parseInt(el('createAnswerTime').value) || 7
+        },
+        players: {}
+      };
+      
+      db.ref('rooms/' + state.roomCode).set(roomData).then(() => {
+        joinRoomAfterCreate();
+      }).catch(err => {
+        showMsg('gateMsg', 'فشل إنشاء الغرفة: ' + err.message, 'danger');
       });
     }
     
-    function updatePlayersList() {
-      const playersDiv = el('playersList');
-      const countSpan = el('playersCount');
-      if(!playersDiv) return;
+    function joinRoomAfterCreate() {
+      state.settings = {
+        rounds: parseInt(el('createRounds').value) || 10,
+        thinkTime: parseInt(el('createThinkTime').value) || 15,
+        answerTime: parseInt(el('createAnswerTime').value) || 7
+      };
       
-      const players = Object.values(state.playersInRoom);
-      if(countSpan) countSpan.textContent = players.length;
+      const playerData = {
+        id: state.deviceId,
+        name: state.playerName,
+        ready: false,
+        answeredCurrent: false,
+        currentScore: 0,
+        joinedAt: firebase.database.ServerValue.TIMESTAMP,
+        isHost: true
+      };
       
-      if(players.length === 0){
-        playersDiv.innerHTML = '<div class="player-item">لا يوجد لاعبون آخرون في الغرفة</div>';
+      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).set(playerData).then(() => {
+        enterLobby();
+      });
+    }
+    
+    function joinRoom() {
+      const playerName = el('multiPlayerName').value.trim();
+      const roomCode = el('roomCode').value.trim().toUpperCase();
+      
+      if(!playerName){
+        showMsg('gateMsg', 'الرجاء إدخال اسم اللاعب', 'danger');
+        return;
+      }
+      if(!roomCode){
+        showMsg('gateMsg', 'الرجاء إدخال كود الغرفة', 'danger');
         return;
       }
       
-      playersDiv.innerHTML = players.map(p => `
-        <div class="player-item">
-          <span class="player-name">👤 ${escapeHtml(p.name || 'لاعب')}</span>
-          <span class="player-status">⭐ ${p.score || 0} نقطة</span>
-        </div>
-      `).join('');
-    }
-
-    function subscribePresence() {
-      const meRef = db.ref('players/' + state.deviceId);
-      db.ref('.info/connected').on('value', function(snap){
-        if (snap.val() === true && state.hasJoined) {
-          meRef.onDisconnect().update({ status: 'offline', lastSeen: firebase.database.ServerValue.TIMESTAMP });
-          updatePlayerPresence();
+      state.playerName = playerName;
+      state.deviceId = createFingerprint();
+      state.roomCode = roomCode;
+      state.isHost = false;
+      state.gameMode = 'multi';
+      
+      // التحقق من وجود الغرفة
+      db.ref('rooms/' + roomCode).once('value').then(snap => {
+        if(!snap.exists()){
+          showMsg('gateMsg', 'الغرفة غير موجودة. تأكد من الكود', 'danger');
+          return;
         }
+        
+        const room = snap.val();
+        if(room.gameStarted){
+          showMsg('gateMsg', 'المسابقة بدأت بالفعل. لا يمكن الانضمام الآن', 'danger');
+          return;
+        }
+        
+        state.settings = room.settings;
+        
+        const playerData = {
+          id: state.deviceId,
+          name: state.playerName,
+          ready: false,
+          answeredCurrent: false,
+          currentScore: 0,
+          joinedAt: firebase.database.ServerValue.TIMESTAMP,
+          isHost: false
+        };
+        
+        db.ref('rooms/' + roomCode + '/players/' + state.deviceId).set(playerData).then(() => {
+          enterLobby();
+        });
+      }).catch(err => {
+        showMsg('gateMsg', 'فشل الانضمام: ' + err.message, 'danger');
       });
+    }
+    
+    function enterLobby() {
+      el('gateCard').classList.add('hidden');
+      el('lobbyCard').classList.remove('hidden');
+      el('displayRoomCode').textContent = state.roomCode;
+      el('lobbyTitle').textContent = 'غرفة انتظار - ' + state.roomCode;
       
-      // مراقبة اللاعبين في الغرفة
-      db.ref('rooms/' + state.room + '/players').on('value', function(snap){
-        state.playersInRoom = snap.val() || {};
-        updatePlayersList();
-      });
+      if(state.isHost){
+        el('hostSettingsPanel').classList.remove('hidden');
+        el('hostRounds').value = state.settings.rounds;
+        el('hostThinkTime').value = state.settings.thinkTime;
+        el('hostAnswerTime').value = state.settings.answerTime;
+        el('startGameBtn').style.display = 'block';
+      } else {
+        el('hostSettingsPanel').classList.add('hidden');
+        el('startGameBtn').style.display = 'none';
+      }
       
-      // مراقبة إجابات الجولة الحالية
-      if(state.questionIndex !== undefined){
-        db.ref('rooms/' + state.room + '/roundAnswers/' + state.questionIndex).on('value', function(snap){
-          const answers = snap.val() || {};
-          // تحديث الإجابات من اللاعبين الآخرين
-          for(const [pid, ans] of Object.entries(answers)){
-            if(pid !== state.deviceId && !state.roundAnswers[pid]){
-              state.roundAnswers[pid] = ans;
-            }
-          }
-          if(checkAllPlayersAnswered() && state.phase === 'thinking' && !state.waitingForAll){
-            clearInterval(state.timer);
-            startPhase('answer');
+      // الاستماع لتغييرات اللاعبين
+      db.ref('rooms/' + state.roomCode + '/players').on('value', snap => {
+        state.players = snap.val() || {};
+        updateLobbyPlayersList();
+        
+        // التحقق من بدء اللعبة من قبل المضيف
+        db.ref('rooms/' + state.roomCode + '/gameStarted').once('value', snap => {
+          if(snap.val() === true && !state.gameStarted){
+            startGame();
           }
         });
+      });
+      
+      // الاستماع لتغييرات الإعدادات
+      db.ref('rooms/' + state.roomCode + '/settings').on('value', snap => {
+        if(snap.exists() && !state.isHost){
+          state.settings = snap.val();
+        }
+      });
+    }
+    
+    function updateLobbyPlayersList() {
+      const container = el('lobbyPlayersList');
+      const playersList = Object.values(state.players);
+      el('playersCountLobby').textContent = playersList.length;
+      
+      container.innerHTML = playersList.map(p => `
+        <div class="player-item">
+          <span class="player-name">${escapeHtml(p.name)} ${p.isHost ? '👑' : ''}</span>
+          <span class="${p.ready ? 'ready-badge' : 'waiting-badge'}">${p.ready ? '✅ جاهز' : '⏳ غير جاهز'}</span>
+        </div>
+      `).join('');
+      
+      // التحقق من أن الجميع جاهز
+      const allReady = playersList.length > 1 && playersList.every(p => p.ready === true);
+      if(allReady && state.isHost){
+        showMsg('lobbyMsg', 'جميع اللاعبين جاهزون! يمكنك بدء المسابقة', 'success');
       }
-      
-      meRef.on('value', function(snap){
-        const me = snap.val() || {};
-        if (me.status === 'banned') {
-          window.location.href = 'access-denied.html';
-          return;
-        }
-        if (me.kickedAt && me.kickedAt !== state.kickedAtSeen) {
-          state.kickedAtSeen = me.kickedAt;
-          clearInterval(state.timer);
-          state.phase = 'idle';
-          state.room = 'lobby';
-          if(el('roomBadge')) el('roomBadge').textContent = 'lobby';
-          if(el('startBtn')) el('startBtn').classList.remove('hidden');
-          showMsg('gameMsg', me.kickMessage || 'تم طردك من الغرفة الحالية.', 'danger');
-        }
-      });
-      
-      // مراقبة الإعلانات
-      db.ref('announcements/latest').on('value', function(snap){
-        const ann = snap.val();
-        if(ann && ann.message && ann.targetRoom === state.room){
-          const annBox = el('announcementBox');
-          if(annBox){
-            annBox.innerHTML = `📢 ${escapeHtml(ann.message)}`;
-            annBox.classList.remove('hidden');
-            setTimeout(() => annBox.classList.add('hidden'), 10000);
-          }
-        }
-      });
     }
-
-    function bindQuestions() {
-      db.ref('questions').on('value', function(snap){
-        const raw = snap.val() || {};
-        state.rawQuestions = Object.values(raw);
-        state.questions = shuffle(state.rawQuestions).slice(0, Math.max(state.settings.rounds, 1));
-        if (state.phase === 'idle') {
-          showMsg('gameMsg', state.questions.length ? ('تم تحميل ' + state.questions.length + ' سؤال.') : 'لا توجد أسئلة حالياً.', state.questions.length ? 'success' : 'warning');
-        }
-      });
+    
+    function toggleReady() {
+      state.isReady = !state.isReady;
+      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({ ready: state.isReady });
+      el('readyBtn').textContent = state.isReady ? '✅ أنت جاهز' : '⏳ جاهز';
+      el('readyBtn').style.background = state.isReady ? 'var(--green)' : '';
+      showMsg('lobbyMsg', state.isReady ? 'أنت جاهز! انتظر بقية اللاعبين' : 'تم إلغاء الجهوزية', 'info');
     }
-
-    function bindSettings() {
-      db.ref('settings').on('value', function(snap){
-        const val = snap.val() || {};
-        const live = val.live || {};
-        state.settings.rounds = Math.min(30, Math.max(10, Number(live.rounds || val.rounds || 10)));
-        state.settings.thinkTime = Number(live.thinkTime || val.thinkTime || 15);
-        state.settings.answerTime = Number(live.answerTime || val.answerTime || 7);
-        if(el('roundCounter')) el('roundCounter').textContent = Math.min(state.questionIndex + 1, state.settings.rounds) + ' / ' + state.settings.rounds;
-        showMsg('syncNotice', 'تم تحديث الإعدادات مباشرة: ' + state.settings.rounds + ' جولات • ' + state.settings.thinkTime + ' ث تفكير • ' + state.settings.answerTime + ' ث عرض.', 'info');
-        if (state.phase === 'thinking') {
-          state.remaining = state.settings.thinkTime;
-          updateTimerUi();
-        }
-        if (state.phase === 'answer') {
-          state.remaining = state.settings.answerTime;
-          updateTimerUi();
-        }
-        state.questions = shuffle(state.rawQuestions).slice(0, Math.max(state.settings.rounds, 1));
-      });
+    
+    function updateHostSettings() {
+      const newSettings = {
+        rounds: parseInt(el('hostRounds').value),
+        thinkTime: parseInt(el('hostThinkTime').value),
+        answerTime: parseInt(el('hostAnswerTime').value)
+      };
+      state.settings = newSettings;
+      db.ref('rooms/' + state.roomCode + '/settings').update(newSettings);
+      showMsg('lobbyMsg', 'تم تحديث إعدادات المسابقة', 'success');
     }
-
-    function checkBanThenOpen() {
-      state.deviceId = createFingerprint();
-      if(el('deviceBadge')) el('deviceBadge').textContent = state.deviceId;
-      db.ref('banned/' + state.deviceId).once('value').then(function(snap){
-        if (snap.exists()) {
-          window.location.href = 'access-denied.html';
-          return;
-        }
-        showMsg('gateMsg', 'الجهاز مسموح. يمكنك الآن الدخول للعبة.', 'success');
-      }).catch(function(){
-        showMsg('gateMsg', 'تعذر التحقق من الحظر حالياً. حاول مرة أخرى.', 'danger');
-      });
+    
+    function leaveRoom() {
+      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).remove();
+      // إذا كان المضيف يغادر، احذف الغرفة
+      if(state.isHost){
+        db.ref('rooms/' + state.roomCode).remove();
+      }
+      resetAndGoHome();
     }
-
-    function joinGame() {
-      const name = el('playerName').value.trim();
-      const room = el('roomName').value.trim() || 'room-1';
-      if (!name) {
-        showMsg('gateMsg', 'اكتب اسم اللاعب أولاً.', 'danger');
+    
+    function resetAndGoHome() {
+      clearInterval(state.timer);
+      state.gameStarted = false;
+      state.isReady = false;
+      el('gameCard').classList.add('hidden');
+      el('lobbyCard').classList.add('hidden');
+      el('gateCard').classList.remove('hidden');
+      el('soloPlayerName').value = '';
+      el('multiPlayerName').value = '';
+      el('roomCode').value = '';
+    }
+    
+    function startSoloGame() {
+      const playerName = el('soloPlayerName').value.trim();
+      if(!playerName){
+        showMsg('gateMsg', 'الرجاء إدخال اسم اللاعب', 'danger');
         return;
       }
-      db.ref('banned/' + state.deviceId).once('value').then(function(snap){
-        if (snap.exists()) {
-          window.location.href = 'access-denied.html';
-          return;
+      state.playerName = playerName;
+      state.deviceId = createFingerprint();
+      state.gameMode = 'solo';
+      state.roomCode = 'solo_' + state.deviceId;
+      state.settings.rounds = parseInt(el('createRounds').value) || 10;
+      state.settings.thinkTime = parseInt(el('createThinkTime').value) || 15;
+      state.settings.answerTime = parseInt(el('createAnswerTime').value) || 7;
+      startGame();
+    }
+    
+    // Event Listeners
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+        
+        if(mode === 'solo'){
+          el('soloMode').classList.remove('hidden');
+          el('multiMode').classList.add('hidden');
+          el('createRoomPanel').classList.remove('hidden');
+          el('createRoomBtn').style.display = 'none';
+          el('joinRoomBtn').style.display = 'none';
+          el('startSoloBtn').style.display = 'block';
+          el('createRoomBtn').style.display = 'none';
+        } else {
+          el('soloMode').classList.add('hidden');
+          el('multiMode').classList.remove('hidden');
+          el('createRoomPanel').classList.remove('hidden');
+          el('createRoomBtn').style.display = 'block';
+          el('joinRoomBtn').style.display = 'block';
+          el('startSoloBtn').style.display = 'none';
         }
-        state.playerName = name;
-        state.room = room;
-        state.hasJoined = true;
-        updatePlayerPresence();
-        subscribePresence();
-        if(el('welcomeTitle')) el('welcomeTitle').textContent = 'أهلاً ' + name;
-        if(el('roomBadge')) el('roomBadge').textContent = room;
-        if(el('gateCard')) el('gateCard').classList.add('hidden');
-        if(el('gameCard')) el('gameCard').classList.remove('hidden');
-        showMsg('gameMsg', 'تم الدخول بنجاح. اضغط بدء اللعبة عندما تكون جاهزاً.', 'success');
       });
-    }
-
-    function leaveRoom() {
-      clearInterval(state.timer);
-      if(state.roundEndTimer) clearTimeout(state.roundEndTimer);
-      db.ref('rooms/' + state.room + '/players/' + state.deviceId).remove();
-      db.ref('rooms/' + state.room + '/roundAnswers/' + state.questionIndex + '/' + state.deviceId).remove();
-      db.ref('players/' + state.deviceId).update({ room: 'lobby', status: 'online', phase: 'idle', lastSeen: firebase.database.ServerValue.TIMESTAMP });
-      state.phase = 'idle';
-      state.selected = null;
-      state.waitingForAll = false;
-      if(el('startBtn')) el('startBtn').classList.remove('hidden');
-      if(el('leaveBtn')) el('leaveBtn').classList.add('hidden');
-      showMsg('gameMsg', 'تمت مغادرة الغرفة والعودة إلى وضع الانتظار.', 'warning');
-    }
-
-    if(el('joinBtn')) el('joinBtn').addEventListener('click', joinGame);
-    if(el('startBtn')) el('startBtn').addEventListener('click', startGame);
-    if(el('leaveBtn')) el('leaveBtn').addEventListener('click', leaveRoom);
-
-    checkBanThenOpen();
-    bindSettings();
-    bindQuestions();
+    });
+    
+    el('createRoomBtn').addEventListener('click', createRoom);
+    el('joinRoomBtn').addEventListener('click', joinRoom);
+    el('startSoloBtn').addEventListener('click', startSoloGame);
+    el('readyBtn').addEventListener('click', toggleReady);
+    el('startGameBtn').addEventListener('click', startGame);
+    el('updateSettingsBtn').addEventListener('click', updateHostSettings);
+    el('leaveLobbyBtn').addEventListener('click', leaveRoom);
+    el('closeResultBtn').addEventListener('click', () => {
+      el('resultOverlay').style.display = 'none';
+      resetAndGoHome();
+    });
+    
+    // تفعيل الوضع الفردي افتراضياً
+    document.querySelector('.mode-btn[data-mode="solo"]').click();
+    
+    // التحقق من الحظر
+    const deviceId = createFingerprint();
+    db.ref('banned/' + deviceId).once('value', snap => {
+      if(snap.exists()){
+        document.body.innerHTML = '<div style="text-align:center;padding:50px"><h1>🚫 تم حظر هذا الجهاز</h1></div>';
+      }
+    });
   </script>
 </body>
 </html>

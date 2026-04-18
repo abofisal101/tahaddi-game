@@ -24,6 +24,7 @@
       --blue:#69a7ff;
       --radius:24px;
       --shadow:0 16px 45px rgba(0,0,0,.42);
+      --glow:0 0 20px rgba(255,49,49,0.5);
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;padding:0;min-height:100%;font-family:'Cairo',system-ui,sans-serif;background:radial-gradient(circle at top,#240909 0%,#0b0b0b 35%,#050505 100%);color:var(--text)}
@@ -89,9 +90,18 @@
     .settings-panel{background:var(--panel-2);border-radius:18px;padding:12px;margin-bottom:12px}
     .settings-panel h4{margin:0 0 10px;font-size:16px}
     .range-setting{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-    .waiting-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px}
-    .waiting-spinner{width:50px;height:50px;border:3px solid var(--red);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .announcement-bar{background:linear-gradient(135deg,#1a0a0a,#0d0505);border:2px solid var(--red);border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:var(--glow);animation:borderPulse 2s infinite}
+    @keyframes borderPulse{
+      0%{box-shadow:0 0 5px rgba(255,45,45,0.3);border-color:#ff2d2d}
+      50%{box-shadow:0 0 25px rgba(255,45,45,0.8);border-color:#ff6b6b}
+      100%{box-shadow:0 0 5px rgba(255,45,45,0.3);border-color:#ff2d2d}
+    }
+    .marquee-container{background:rgba(0,0,0,.6);padding:14px;overflow:hidden;white-space:nowrap}
+    .marquee-text{display:inline-block;padding-left:100%;animation:marquee 15s linear infinite;font-size:18px;font-weight:700;color:#fff;text-shadow:0 0 5px var(--red)}
+    @keyframes marquee{
+      0%{transform:translate(0,0)}
+      100%{transform:translate(-100%,0)}
+    }
     @media (max-width:720px){
       .join-grid,.meta{grid-template-columns:1fr}
       .question-card h2{font-size:21px}
@@ -110,6 +120,13 @@
           <p>اختر طريقة اللعب وابدأ التحدي</p>
         </div>
         <div class="badge">Dark Mode • Red/Black UI</div>
+      </div>
+      
+      <!-- شريط الإعلانات -->
+      <div class="announcement-bar">
+        <div class="marquee-container">
+          <div class="marquee-text" id="announceMarquee">✨ مرحباً بكم في المسابقة ✨</div>
+        </div>
       </div>
       
       <div class="mode-selector">
@@ -159,7 +176,7 @@
       <div id="gateMsg" class="message info" style="margin-top:12px">اختر وضع اللعب أولاً</div>
     </section>
 
-    <!-- شاشة انتظار الغرفة -->
+    <!-- شاشة انتظار الغرفة (للمجموعات فقط) -->
     <section class="card hidden" id="lobbyCard">
       <div class="top">
         <div class="brand">
@@ -194,12 +211,12 @@
       <div class="row" style="margin-top:14px">
         <button class="btn-success" id="readyBtn">✅ جاهز</button>
         <button class="btn-primary" id="startGameBtn" style="display:none">🚀 بدء المسابقة</button>
-        <button class="btn-secondary" id="leaveLobbyBtn">🚪 مغادرة</button>
+        <button class="btn-secondary" id="leaveLobbyBtn">🚪 مغادرة الغرفة</button>
       </div>
       <div id="lobbyMsg" class="message info">انتظر بقية اللاعبين... الجميع جاهز سيبدأ اللعب تلقائياً</div>
     </section>
 
-    <!-- شاشة اللعب -->
+    <!-- شاشة اللعب (للمجموعات والفردي) -->
     <section class="card hidden" id="gameCard">
       <div class="top">
         <div class="brand">
@@ -212,15 +229,15 @@
       <div class="meta">
         <div class="box"><div class="label">الجولة</div><div class="value" id="roundCounter">1 / 10</div></div>
         <div class="box"><div class="label">المؤقت</div><div class="value" id="timerValue">15</div></div>
-        <div class="box"><div class="label">المتبقي</div><div class="value" id="playersRemaining">0</div></div>
-        <div class="box"><div class="label">المتصلون</div><div class="value" id="onlineCount">0</div></div>
+        <div class="box"><div class="label" id="extraLabel">المتبقي</div><div class="value" id="extraValue">0</div></div>
+        <div class="box"><div class="label">المتصلون</div><div class="value" id="onlineCount">1</div></div>
       </div>
 
       <div style="margin:14px 0">
         <div class="timer-wrap"><div class="timer-fill" id="timerFill"></div></div>
       </div>
 
-      <div class="players-list" style="max-height:150px">
+      <div id="multiPlayersList" class="players-list hidden">
         <h4>👥 اللاعبون في المسابقة</h4>
         <div id="gamePlayersList"></div>
       </div>
@@ -234,21 +251,16 @@
         <div class="opts" id="optionsWrap"></div>
       </div>
       
+      <div class="row" style="margin-top:14px">
+        <button class="btn-secondary" id="exitGameBtn">🚪 الخروج من المسابقة</button>
+      </div>
+      
       <div id="gameMsg" class="message warning" style="margin-top:12px"></div>
     </section>
 
-    <!-- شاشة انتظار الجولة -->
-    <div id="waitingOverlay" class="waiting-overlay hidden">
-      <div class="waiting-spinner"></div>
-      <div style="text-align:center">
-        <h3>⏳ انتظار بقية اللاعبين</h3>
-        <p id="waitingMessage">جاري استلام إجابات جميع اللاعبين...</p>
-      </div>
-    </div>
-
     <!-- نافذة النتائج -->
-    <div id="resultOverlay" class="waiting-overlay hidden" style="z-index:200">
-      <div style="background:var(--panel);border-radius:24px;padding:30px;max-width:90%;text-align:center">
+    <div id="resultOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:200;display:none;align-items:center;justify-content:center">
+      <div style="background:var(--panel);border-radius:24px;padding:30px;max-width:90%;text-align:center;border:2px solid var(--red)">
         <h2 id="resultTitle">🏆 نهاية المسابقة 🏆</h2>
         <p id="resultMessage"></p>
         <button class="btn-primary" id="closeResultBtn">🏠 العودة للرئيسية</button>
@@ -291,7 +303,7 @@
       players: {},
       hasAnswered: false,
       isWaitingForOthers: false,
-      savedProgress: null
+      isSoloMode: true
     };
 
     // حفظ التقدم في localStorage
@@ -304,6 +316,8 @@
           questionIndex: state.questionIndex,
           score: state.score,
           gameMode: state.gameMode,
+          isHost: state.isHost,
+          settings: state.settings,
           savedAt: Date.now()
         };
         localStorage.setItem('quizProgress', JSON.stringify(progress));
@@ -316,7 +330,6 @@
       if(saved){
         try{
           const progress = JSON.parse(saved);
-          // التحقق من أن التقدم حديث (أقل من ساعة)
           if(Date.now() - progress.savedAt < 3600000){
             return progress;
           }
@@ -340,7 +353,7 @@
         box.className = 'message ' + type;
         box.textContent = text;
         setTimeout(() => {
-          if(box.className === 'message ' + type) box.style.opacity = '0.5';
+          if(box.style.opacity !== '0') box.style.opacity = '0.5';
           setTimeout(() => { if(box) box.style.opacity = '1'; }, 2000);
         }, 3000);
       }
@@ -403,7 +416,6 @@
         </button>
       `).join('');
       
-      // إضافة مستمعي الأحداث للأزرار
       document.querySelectorAll('.opt').forEach(btn => {
         btn.removeEventListener('click', handleOptionClick);
         btn.addEventListener('click', handleOptionClick);
@@ -416,10 +428,7 @@
     }
 
     function selectAnswer(opt) {
-      if(state.phase !== 'thinking' || state.hasAnswered || state.isWaitingForOthers) {
-        console.log('Cannot answer: phase=', state.phase, 'hasAnswered=', state.hasAnswered, 'waiting=', state.isWaitingForOthers);
-        return;
-      }
+      if(state.phase !== 'thinking' || state.hasAnswered) return;
       
       state.hasAnswered = true;
       const isCorrect = (opt === state.currentQuestion.ans);
@@ -427,7 +436,6 @@
       
       el('gameScore').textContent = state.score;
       
-      // تغيير لون الخيار المختار
       document.querySelectorAll('.opt').forEach(btn => {
         btn.disabled = true;
         if(btn.dataset.opt === opt){
@@ -438,7 +446,6 @@
         }
       });
       
-      // تسجيل الإجابة في قاعدة البيانات
       const answerData = {
         playerId: state.deviceId,
         playerName: state.playerName,
@@ -448,16 +455,58 @@
         timestamp: firebase.database.ServerValue.TIMESTAMP
       };
       
-      db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex + '/' + state.deviceId).set(answerData);
-      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({
-        answeredCurrent: true,
-        currentScore: state.score,
-        lastAnswer: opt,
-        lastAnswerCorrect: isCorrect
-      });
+      if(state.gameMode === 'multi'){
+        db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex + '/' + state.deviceId).set(answerData);
+        db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId').update({
+          answeredCurrent: true,
+          currentScore: state.score
+        });
+        showMsg('gameMsg', isCorrect ? '✅ إجابة صحيحة! +1 نقطة' : '❌ إجابة خاطئة', isCorrect ? 'success' : 'danger');
+      } else {
+        // الوضع الفردي: الانتقال فوراً للسؤال التالي
+        showMsg('gameMsg', isCorrect ? '✅ إجابة صحيحة! +1 نقطة' : '❌ إجابة خاطئة', isCorrect ? 'success' : 'danger');
+        setTimeout(() => {
+          moveToNextRoundSolo();
+        }, 1000);
+      }
       
-      showMsg('gameMsg', isCorrect ? '✅ إجابة صحيحة! +1 نقطة' : '❌ إجابة خاطئة', isCorrect ? 'success' : 'danger');
       saveProgress();
+    }
+    
+    function moveToNextRoundSolo() {
+      state.questionIndex++;
+      
+      if(state.questionIndex >= Math.min(state.settings.rounds, state.questions.length)){
+        endGame();
+        return;
+      }
+      
+      state.currentQuestion = state.questions[state.questionIndex];
+      state.hasAnswered = false;
+      state.phase = 'thinking';
+      state.remainingTime = state.settings.thinkTime;
+      
+      renderQuestionUI();
+      startTimerSolo();
+      saveProgress();
+    }
+    
+    function startTimerSolo() {
+      clearInterval(state.timer);
+      updateTimerUI();
+      
+      state.timer = setInterval(() => {
+        if(state.remainingTime <= 0){
+          clearInterval(state.timer);
+          if(!state.hasAnswered){
+            // لم يجب، ننتقل للسؤال التالي بدون إضافة نقطة
+            moveToNextRoundSolo();
+          }
+          return;
+        }
+        state.remainingTime--;
+        updateTimerUI();
+      }, 1000);
     }
 
     function checkAllPlayersAnswered() {
@@ -466,16 +515,15 @@
       const answeredPlayers = activePlayers.filter(p => p.answeredCurrent === true);
       const remaining = activePlayers.length - answeredPlayers.length;
       
-      el('playersRemaining').textContent = remaining;
+      el('extraValue').textContent = remaining;
       el('onlineCount').textContent = activePlayers.length;
       
       return answeredPlayers.length >= activePlayers.length && activePlayers.length > 0;
     }
 
-    function moveToNextRound() {
+    function moveToNextRoundMulti() {
       clearInterval(state.timer);
       state.isWaitingForOthers = false;
-      el('waitingOverlay').classList.add('hidden');
       
       state.questionIndex++;
       
@@ -488,23 +536,21 @@
       state.hasAnswered = false;
       state.selectedAnswer = null;
       
-      // إعادة تعيين حالة الإجابة للاعبين
       const playersList = Object.values(state.players);
       playersList.forEach(p => {
         db.ref('rooms/' + state.roomCode + '/players/' + p.id).update({ answeredCurrent: false });
       });
       
       renderQuestionUI();
-      startPhase('thinking');
+      startPhaseMulti('thinking');
       saveProgress();
     }
 
-    function startPhase(phase) {
+    function startPhaseMulti(phase) {
       clearInterval(state.timer);
       state.phase = phase;
       state.hasAnswered = false;
       state.isWaitingForOthers = false;
-      el('waitingOverlay').classList.add('hidden');
       
       if(phase === 'thinking'){
         state.remainingTime = state.settings.thinkTime;
@@ -513,7 +559,6 @@
       } else {
         state.remainingTime = state.settings.answerTime;
         el('phaseLabel').textContent = '📖 عرض الإجابة الصحيحة';
-        // عرض الإجابة الصحيحة للجميع
         document.querySelectorAll('.opt').forEach(btn => {
           if(btn.dataset.opt === state.currentQuestion.ans){
             btn.classList.add('correct');
@@ -529,7 +574,6 @@
           clearInterval(state.timer);
           
           if(phase === 'thinking'){
-            // إذا لم يجب اللاعب، نسجل إجابة فارغة
             if(!state.hasAnswered){
               const answerData = {
                 playerId: state.deviceId,
@@ -540,15 +584,12 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
               };
               db.ref('rooms/' + state.roomCode + '/answers/' + state.questionIndex + '/' + state.deviceId).set(answerData);
-              db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({ answeredCurrent: true });
+              db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId').update({ answeredCurrent: true });
             }
             
-            // التحقق من جميع اللاعبين
             state.isWaitingForOthers = true;
-            el('waitingOverlay').classList.remove('hidden');
-            el('waitingMessage').innerHTML = 'جاري انتظار إجابات جميع اللاعبين...<br>سيتم الانتقال للسؤال التالي تلقائياً';
+            el('phaseLabel').textContent = '⏳ انتظار بقية اللاعبين...';
             
-            // فحص كل ثانية إذا كان الجميع أجاب
             const checkInterval = setInterval(() => {
               db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
                 const players = snap.val() || {};
@@ -557,20 +598,17 @@
                 
                 if(answered >= total && total > 0){
                   clearInterval(checkInterval);
-                  moveToNextRound();
+                  moveToNextRoundMulti();
                 }
               });
             }, 1000);
             
-            // timeout أمان بعد 10 ثواني
             setTimeout(() => {
               clearInterval(checkInterval);
-              if(state.isWaitingForOthers) moveToNextRound();
+              if(state.isWaitingForOthers) moveToNextRoundMulti();
             }, 10000);
-            
           } else {
-            // مرحلة الإجابة انتهت، ننتقل مباشرة
-            moveToNextRound();
+            moveToNextRoundMulti();
           }
           return;
         }
@@ -585,59 +623,62 @@
       state.gameStarted = false;
       state.phase = 'ended';
       
-      // جمع النتائج النهائية
-      db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
-        const players = snap.val() || {};
-        const results = Object.values(players)
-          .filter(p => p.status === 'online')
-          .sort((a,b) => (b.currentScore || 0) - (a.currentScore || 0));
-        
-        const winner = results[0];
+      if(state.gameMode === 'multi'){
+        db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
+          const players = snap.val() || {};
+          const results = Object.values(players)
+            .filter(p => p.status === 'online')
+            .sort((a,b) => (b.currentScore || 0) - (a.currentScore || 0));
+          
+          const winner = results[0];
+          const resultDiv = el('resultOverlay');
+          el('resultTitle').textContent = '🏆 نهاية المسابقة 🏆';
+          el('resultMessage').innerHTML = `
+            <div style="font-size:24px;margin:20px 0">🥇 الفائز: ${escapeHtml(winner?.name || 'لا يوجد')}</div>
+            <div style="font-size:18px">النتيجة: ${winner?.currentScore || 0} نقطة</div>
+            <div style="margin-top:20px;text-align:right">
+              ${results.map((p,i) => `<div>${i+1}. ${escapeHtml(p.name)}: ${p.currentScore || 0} نقطة</div>`).join('')}
+            </div>
+          `;
+          resultDiv.style.display = 'flex';
+          
+          db.ref('rooms/' + state.roomCode + '/finalResults').set({
+            winner: winner?.name,
+            results: results,
+            endedAt: firebase.database.ServerValue.TIMESTAMP
+          });
+        });
+      } else {
         const resultDiv = el('resultOverlay');
-        el('resultTitle').textContent = '🏆 نهاية المسابقة 🏆';
+        el('resultTitle').textContent = '🏆 انتهت المسابقة 🏆';
         el('resultMessage').innerHTML = `
-          <div style="font-size:24px;margin:20px 0">🥇 الفائز: ${escapeHtml(winner?.name || 'لا يوجد')}</div>
-          <div style="font-size:18px">النتيجة: ${winner?.currentScore || 0} نقطة</div>
-          <div style="margin-top:20px;text-align:right">
-            ${results.map((p,i) => `<div>${i+1}. ${escapeHtml(p.name)}: ${p.currentScore || 0} نقطة</div>`).join('')}
-          </div>
+          <div style="font-size:32px;margin:20px 0">⭐ نتيجتك: ${state.score} نقطة</div>
+          <div>من أصل ${Math.min(state.settings.rounds, state.questions.length)} جولة</div>
         `;
         resultDiv.style.display = 'flex';
-        
-        // حفظ النتائج
-        db.ref('rooms/' + state.roomCode + '/finalResults').set({
-          winner: winner?.name,
-          winnerId: winner?.id,
-          results: results,
-          endedAt: firebase.database.ServerValue.TIMESTAMP
-        });
-        
-        // مسح التقدم المحفوظ
-        localStorage.removeItem('quizProgress');
-      });
+      }
+      
+      localStorage.removeItem('quizProgress');
     }
 
     function startGame() {
       if(state.gameStarted) return;
       
-      const playersList = Object.values(state.players);
-      const onlinePlayers = playersList.filter(p => p.status === 'online');
-      
-      if(onlinePlayers.length < 1 && state.gameMode === 'multi'){
-        showMsg('lobbyMsg', 'لا يوجد لاعبون آخرون في الغرفة', 'danger');
-        return;
-      }
-      
-      // التحقق من أن جميع اللاعبين جاهزون
-      const allReady = onlinePlayers.every(p => p.ready === true);
-      if(!allReady && state.gameMode === 'multi' && state.isHost){
-        showMsg('lobbyMsg', 'ليس جميع اللاعبين جاهزين بعد', 'warning');
-        return;
+      if(state.gameMode === 'multi'){
+        const playersList = Object.values(state.players);
+        const onlinePlayers = playersList.filter(p => p.status === 'online');
+        const allReady = onlinePlayers.every(p => p.ready === true);
+        
+        if(!allReady && state.isHost){
+          showMsg('lobbyMsg', 'ليس جميع اللاعبين جاهزين بعد', 'warning');
+          return;
+        }
       }
       
       loadQuestions().then(() => {
         if(state.questions.length < state.settings.rounds){
-          showMsg('gameMsg', `لا توجد أسئلة كافية. المتاح: ${state.questions.length}، المطلوب: ${state.settings.rounds}`, 'danger');
+          showMsg(state.gameMode === 'multi' ? 'lobbyMsg' : 'gameMsg', 
+            `لا توجد أسئلة كافية. المتاح: ${state.questions.length}، المطلوب: ${state.settings.rounds}`, 'danger');
           return;
         }
         
@@ -648,21 +689,35 @@
         state.hasAnswered = false;
         
         el('gameScore').textContent = '0';
-        el('lobbyCard').classList.add('hidden');
-        el('gameCard').classList.remove('hidden');
-        el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
-        el('gameRoomBadge').textContent = state.roomCode;
         
-        renderQuestionUI();
-        startPhase('thinking');
-        
-        // تحديث حالة اللعبة في قاعدة البيانات
-        db.ref('rooms/' + state.roomCode).update({
-          gameStarted: true,
-          startTime: firebase.database.ServerValue.TIMESTAMP,
-          currentRound: 0,
-          settings: state.settings
-        });
+        if(state.gameMode === 'multi'){
+          el('lobbyCard').classList.add('hidden');
+          el('multiPlayersList').classList.remove('hidden');
+          el('extraLabel').textContent = 'المتبقي';
+          el('gameCard').classList.remove('hidden');
+          el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
+          el('gameRoomBadge').textContent = state.roomCode;
+          
+          renderQuestionUI();
+          startPhaseMulti('thinking');
+          
+          db.ref('rooms/' + state.roomCode).update({
+            gameStarted: true,
+            startTime: firebase.database.ServerValue.TIMESTAMP,
+            currentRound: 0,
+            settings: state.settings
+          });
+        } else {
+          el('gateCard').classList.add('hidden');
+          el('multiPlayersList').classList.add('hidden');
+          el('extraLabel').textContent = 'تقدم';
+          el('gameCard').classList.remove('hidden');
+          el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
+          el('gameRoomBadge').textContent = 'لعب فردي';
+          
+          renderQuestionUI();
+          startTimerSolo();
+        }
         
         saveProgress();
       }).catch(err => {
@@ -671,7 +726,7 @@
     }
 
     function createRoom() {
-      const playerName = (state.gameMode === 'solo' ? el('soloPlayerName') : el('multiPlayerName')).value.trim();
+      const playerName = el('multiPlayerName').value.trim();
       if(!playerName){
         showMsg('gateMsg', 'الرجاء إدخال اسم اللاعب', 'danger');
         return;
@@ -681,17 +736,15 @@
       state.deviceId = createFingerprint();
       state.roomCode = generateRoomCode();
       state.isHost = true;
-      state.gameMode = document.querySelector('.mode-btn.active')?.dataset.mode || 'solo';
+      state.gameMode = 'multi';
+      state.isSoloMode = false;
       
-      if(state.gameMode === 'solo'){
-        state.settings.rounds = parseInt(el('createRounds').value) || 10;
-        state.settings.thinkTime = parseInt(el('createThinkTime').value) || 15;
-        state.settings.answerTime = parseInt(el('createAnswerTime').value) || 7;
-        startGame();
-        return;
-      }
+      state.settings = {
+        rounds: parseInt(el('createRounds').value) || 10,
+        thinkTime: parseInt(el('createThinkTime').value) || 15,
+        answerTime: parseInt(el('createAnswerTime').value) || 7
+      };
       
-      // إنشاء الغرفة في Firebase
       const roomData = {
         roomCode: state.roomCode,
         displayName: state.roomCode,
@@ -699,26 +752,8 @@
         hostName: state.playerName,
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         gameStarted: false,
-        settings: {
-          rounds: parseInt(el('createRounds').value) || 10,
-          thinkTime: parseInt(el('createThinkTime').value) || 15,
-          answerTime: parseInt(el('createAnswerTime').value) || 7
-        },
+        settings: state.settings,
         players: {}
-      };
-      
-      db.ref('rooms/' + state.roomCode).set(roomData).then(() => {
-        joinRoomAfterCreate();
-      }).catch(err => {
-        showMsg('gateMsg', 'فشل إنشاء الغرفة: ' + err.message, 'danger');
-      });
-    }
-    
-    function joinRoomAfterCreate() {
-      state.settings = {
-        rounds: parseInt(el('createRounds').value) || 10,
-        thinkTime: parseInt(el('createThinkTime').value) || 15,
-        answerTime: parseInt(el('createAnswerTime').value) || 7
       };
       
       const playerData = {
@@ -732,8 +767,12 @@
         isHost: true
       };
       
-      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).set(playerData).then(() => {
+      roomData.players[state.deviceId] = playerData;
+      
+      db.ref('rooms/' + state.roomCode).set(roomData).then(() => {
         enterLobby();
+      }).catch(err => {
+        showMsg('gateMsg', 'فشل إنشاء الغرفة: ' + err.message, 'danger');
       });
     }
     
@@ -755,8 +794,8 @@
       state.roomCode = roomCode;
       state.isHost = false;
       state.gameMode = 'multi';
+      state.isSoloMode = false;
       
-      // التحقق من وجود الغرفة
       db.ref('rooms/' + roomCode).once('value').then(snap => {
         if(!snap.exists()){
           showMsg('gateMsg', 'الغرفة غير موجودة. تأكد من الكود', 'danger');
@@ -802,20 +841,14 @@
         el('hostThinkTime').value = state.settings.thinkTime;
         el('hostAnswerTime').value = state.settings.answerTime;
         el('startGameBtn').style.display = 'block';
-      } else {
-        el('hostSettingsPanel').classList.add('hidden');
-        el('startGameBtn').style.display = 'none';
       }
       
-      // إعداد اتصال الخروج
       setupPresence();
       
-      // الاستماع لتغييرات اللاعبين
       db.ref('rooms/' + state.roomCode + '/players').on('value', snap => {
         state.players = snap.val() || {};
         updateLobbyPlayersList();
         
-        // التحقق من بدء اللعبة من قبل المضيف
         db.ref('rooms/' + state.roomCode + '/gameStarted').once('value', snap => {
           if(snap.val() === true && !state.gameStarted){
             startGame();
@@ -823,7 +856,6 @@
         });
       });
       
-      // الاستماع لتغييرات الإعدادات
       db.ref('rooms/' + state.roomCode + '/settings').on('value', snap => {
         if(snap.exists() && !state.isHost){
           state.settings = snap.val();
@@ -856,7 +888,6 @@
         </div>
       `).join('');
       
-      // التحقق من أن الجميع جاهز
       const onlinePlayers = playersList.filter(p => p.status === 'online');
       const allReady = onlinePlayers.length > 1 && onlinePlayers.every(p => p.ready === true);
       if(allReady && state.isHost){
@@ -896,12 +927,17 @@
       showMsg('lobbyMsg', 'تم تحديث إعدادات المسابقة', 'success');
     }
     
-    function leaveRoom() {
+    function exitGame() {
       clearInterval(state.timer);
-      db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).remove();
-      if(state.isHost){
-        db.ref('rooms/' + state.roomCode).remove();
+      
+      if(state.gameMode === 'multi'){
+        db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).remove();
+        if(state.isHost){
+          db.ref('rooms/' + state.roomCode).remove();
+        }
       }
+      
+      localStorage.removeItem('quizProgress');
       resetAndGoHome();
     }
     
@@ -910,8 +946,10 @@
       state.gameStarted = false;
       state.isReady = false;
       state.isWaitingForOthers = false;
-      el('waitingOverlay').classList.add('hidden');
-      el('resultOverlay').classList.add('hidden');
+      state.phase = 'waiting';
+      state.hasAnswered = false;
+      
+      el('resultOverlay').style.display = 'none';
       el('gameCard').classList.add('hidden');
       el('lobbyCard').classList.add('hidden');
       el('gateCard').classList.remove('hidden');
@@ -926,64 +964,113 @@
         showMsg('gateMsg', 'الرجاء إدخال اسم اللاعب', 'danger');
         return;
       }
+      
       state.playerName = playerName;
       state.deviceId = createFingerprint();
       state.gameMode = 'solo';
       state.roomCode = 'solo_' + state.deviceId;
-      state.settings.rounds = parseInt(el('createRounds').value) || 10;
-      state.settings.thinkTime = parseInt(el('createThinkTime').value) || 15;
-      state.settings.answerTime = parseInt(el('createAnswerTime').value) || 7;
+      state.isHost = false;
+      state.isSoloMode = true;
+      state.settings = {
+        rounds: parseInt(el('createRounds').value) || 10,
+        thinkTime: parseInt(el('createThinkTime').value) || 15,
+        answerTime: parseInt(el('createAnswerTime').value) || 7
+      };
+      
       startGame();
     }
     
     function checkSavedProgress() {
       const progress = loadProgress();
       if(progress && progress.roomCode){
-        if(confirm(`هل تريد استئناف اللعبة السابقة في الغرفة ${progress.roomCode}؟\nاسم اللاعب: ${progress.playerName}\nالجولة: ${progress.questionIndex + 1}`)){
+        if(confirm(`هل تريد استئناف اللعبة السابقة؟\nالغرفة: ${progress.roomCode}\nاللاعب: ${progress.playerName}\nالجولة: ${progress.questionIndex + 1}`)){
           state.playerName = progress.playerName;
           state.deviceId = progress.deviceId;
           state.roomCode = progress.roomCode;
           state.gameMode = progress.gameMode;
           state.questionIndex = progress.questionIndex;
           state.score = progress.score;
+          state.isHost = progress.isHost || false;
+          state.settings = progress.settings;
           
-          db.ref('rooms/' + state.roomCode).once('value', snap => {
-            if(snap.exists() && snap.val().gameStarted){
-              state.settings = snap.val().settings;
-              state.players = snap.val().players || {};
-              state.isHost = snap.val().hostId === state.deviceId;
+          if(state.gameMode === 'solo'){
+            loadQuestions().then(() => {
+              state.currentQuestion = state.questions[state.questionIndex];
               state.gameStarted = true;
+              state.hasAnswered = false;
+              state.phase = 'thinking';
+              state.remainingTime = state.settings.thinkTime;
               
-              loadQuestions().then(() => {
-                state.currentQuestion = state.questions[state.questionIndex];
-                el('gateCard').classList.add('hidden');
-                el('gameCard').classList.remove('hidden');
-                el('gameScore').textContent = state.score;
-                el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
-                el('gameRoomBadge').textContent = state.roomCode;
-                renderQuestionUI();
-                
-                // استعادة حالة اللاعب في Firebase
-                db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({
-                  id: state.deviceId,
-                  name: state.playerName,
-                  currentScore: state.score,
-                  status: 'online'
+              el('gateCard').classList.add('hidden');
+              el('multiPlayersList').classList.add('hidden');
+              el('extraLabel').textContent = 'تقدم';
+              el('gameCard').classList.remove('hidden');
+              el('gameScore').textContent = state.score;
+              el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
+              el('gameRoomBadge').textContent = 'لعب فردي';
+              
+              renderQuestionUI();
+              startTimerSolo();
+            });
+          } else {
+            db.ref('rooms/' + state.roomCode).once('value', snap => {
+              if(snap.exists() && snap.val().gameStarted){
+                state.players = snap.val().players || {};
+                loadQuestions().then(() => {
+                  state.currentQuestion = state.questions[state.questionIndex];
+                  state.gameStarted = true;
+                  
+                  el('gateCard').classList.add('hidden');
+                  el('lobbyCard').classList.add('hidden');
+                  el('multiPlayersList').classList.remove('hidden');
+                  el('extraLabel').textContent = 'المتبقي';
+                  el('gameCard').classList.remove('hidden');
+                  el('gameScore').textContent = state.score;
+                  el('gameWelcomeTitle').textContent = 'أهلاً ' + state.playerName;
+                  el('gameRoomBadge').textContent = state.roomCode;
+                  
+                  db.ref('rooms/' + state.roomCode + '/players/' + state.deviceId).update({
+                    status: 'online',
+                    currentScore: state.score
+                  });
+                  
+                  setupPresence();
+                  renderQuestionUI();
+                  startPhaseMulti('thinking');
+                  
+                  setInterval(() => {
+                    if(state.gameStarted){
+                      db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
+                        state.players = snap.val() || {};
+                        updateGamePlayersList();
+                      });
+                    }
+                  }, 2000);
                 });
-                
-                setupPresence();
-                startPhase('thinking');
-              });
-            } else {
-              localStorage.removeItem('quizProgress');
-            }
-          });
+              } else {
+                localStorage.removeItem('quizProgress');
+              }
+            });
+          }
           return true;
         } else {
           localStorage.removeItem('quizProgress');
         }
       }
       return false;
+    }
+    
+    // الإعلانات
+    function listenAnnouncements() {
+      db.ref('globalAnnouncement').on('value', snap => {
+        const ann = snap.val();
+        if(ann && ann.message){
+          el('announceMarquee').innerHTML = `✨ ${escapeHtml(ann.message)} ✨`;
+          setTimeout(() => {
+            el('announceMarquee').innerHTML = '✨ مرحباً بكم في المسابقة ✨';
+          }, 10000);
+        }
+      });
     }
     
     // Event Listeners
@@ -1017,12 +1104,13 @@
     el('readyBtn').addEventListener('click', toggleReady);
     el('startGameBtn').addEventListener('click', startGame);
     el('updateSettingsBtn').addEventListener('click', updateHostSettings);
-    el('leaveLobbyBtn').addEventListener('click', leaveRoom);
+    el('leaveLobbyBtn').addEventListener('click', exitGame);
+    el('exitGameBtn').addEventListener('click', exitGame);
     el('closeResultBtn').addEventListener('click', resetAndGoHome);
     
-    // مراقبة تحديثات اللاعبين في اللعبة
+    // تحديث قائمة اللاعبين في المجموعات
     setInterval(() => {
-      if(state.gameStarted && state.roomCode){
+      if(state.gameStarted && state.gameMode === 'multi' && state.roomCode){
         db.ref('rooms/' + state.roomCode + '/players').once('value', snap => {
           state.players = snap.val() || {};
           updateGamePlayersList();
@@ -1030,16 +1118,19 @@
       }
     }, 2000);
     
+    // الإعلانات
+    listenAnnouncements();
+    
     // تفعيل الوضع الفردي افتراضياً
     document.querySelector('.mode-btn[data-mode="solo"]').click();
     
-    // التحقق من الحظر والبدء
+    // التحقق من الحظر واستعادة التقدم
     const deviceId = createFingerprint();
     db.ref('banned/' + deviceId).once('value', snap => {
       if(snap.exists()){
-        document.body.innerHTML = '<div style="text-align:center;padding:50px"><h1>🚫 تم حظر هذا الجهاز</h1><p>لا يمكنك الوصول إلى المسابقة</p></div>';
-      } else if(!checkSavedProgress()){
-        // لا توجد لعبة محفوظة
+        document.body.innerHTML = '<div style="text-align:center;padding:50px"><h1>🚫 تم حظر هذا الجهاز</h1></div>';
+      } else {
+        checkSavedProgress();
       }
     });
   </script>
